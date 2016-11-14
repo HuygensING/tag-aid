@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router';
 import { setTexts } from '../actions';
 
 class Home extends Component {
@@ -18,7 +19,9 @@ class Home extends Component {
       <div>
         <h1>Texts</h1>
         {texts.map(text => (
-          <div key={text.id}>{text.name}</div>
+          <Link to={`/tag-aid`}>
+            <div key={text.id}>{text.name}</div>
+          </Link>
         ))}
       </div>
     );
