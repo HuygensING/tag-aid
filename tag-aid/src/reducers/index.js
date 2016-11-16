@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
-import textsReducer from './texts';
+import indexTextsReducer from './indexTexts';
+import selectedTextReducer from './selectedText';
 
 export default combineReducers({
   routing: routerReducer,
-  texts: textsReducer,
+  indexTexts: indexTextsReducer,
+  selectedText: selectedTextReducer
 });

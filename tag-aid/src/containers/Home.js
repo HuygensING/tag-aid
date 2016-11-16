@@ -30,7 +30,7 @@ class Home extends Component {
 
 function mapStateToProps(state) {
   return {
-    texts: state.texts
+    texts: state.indexTexts
   }
 }
 
