@@ -15,3 +15,12 @@ export const toggleWitness = (witness) => ({
   type: TOGGLE_WITNESS,
   payload: witness
 });
+
+export const GET_GRAPH = 'GET_GRAPH';
+export const GET_GRAPH_LOADING = 'GET_GRAPH_LOADING';
+export const GET_GRAPH_FAILURE = 'GET_GRAPH_FAILURE';
+export const GET_GRAPH_SUCCESS = 'GET_GRAPH_SUCCESS';
+export const getGraph = (start, end) => ({
+  type: GET_GRAPH,
+  payload: { start, end }
+});
