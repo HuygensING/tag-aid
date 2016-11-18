@@ -5,7 +5,8 @@ import { Router, IndexRoute, Route, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 import rootReducer from './reducers';
 import Home from './containers/Home';
-import TagAid from './components/TagAid';
+import Text from './containers/Text';
+// import TagAid from './components/TagAid';
 
 // const sagaMiddleware = createSagaMiddleware();
 const store = createStore(rootReducer, undefined, compose(
@@ -19,7 +20,7 @@ const App = () => (
   <Provider store={store}>
     <Router history={history}>
       <Route path={'/'} component={Home} />
-      <Route path={'/tag-aid'} component={TagAid} />
+      <Route path={'/text'} component={Text} />
     </Router>
   </Provider>
 );

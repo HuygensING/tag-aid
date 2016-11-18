@@ -5,7 +5,13 @@ export const setTexts = (texts) => ({
 });
 
 export const SET_SELECTED_TEXT = 'SET_SELECTED_TEXT';
-export const setSelectedTexts = (text) => ({
+export const setSelectedText = (text) => ({
   type: SET_SELECTED_TEXT,
   payload: text
+});
+
+export const TOGGLE_WITNESS = 'TOGGLE_WITNESS';
+export const toggleWitness = (witness) => ({
+  type: TOGGLE_WITNESS,
+  payload: witness
 });

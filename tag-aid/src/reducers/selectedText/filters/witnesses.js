@@ -1,9 +1,9 @@
-import { TOGGLE_WITNESSES } from '../actions';
+import { TOGGLE_WITNESS } from '../../../actions';
 
 const defaultState = {};
 export default (previousState = defaultState, { type, payload }) => {
   switch (type) {
-    case TOGGLE_WITNESSES:
+    case TOGGLE_WITNESS:
       return {
         ...previousState,
         [payload]: !previousState[payload]
