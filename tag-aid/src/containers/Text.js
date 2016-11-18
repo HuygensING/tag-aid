@@ -20,7 +20,7 @@ class Text extends Component {
       selectedWitnesses,
       toggleWitness,
       getGraph,
-      nodes,
+      nodesByWitness,
     } = this.props;
     return (
       <div>
@@ -48,7 +48,7 @@ class Text extends Component {
           {selectedWitnesses.map(witness => (
             <div key={witness}>
               <h2>{witness}</h2>
-              <WitnessText nodes={nodes} />
+              <WitnessText nodes={nodesByWitness[witness] || []} />
             </div>
           ))}
         </div>
@@ -66,12 +66,31 @@ function mapStateToProps(state) {
   const selectedWitnesses = (state.selectedText.text.witnesses || emptyList).filter(witness => (
     state.selectedText.filters.witnesses[witness]
   ))
-  const nodes = Object.values(state.selectedText.graph.nodesById);
+
+  const nodesByWitness = {}
+  const nodesAtPositionByWitness = state.selectedText.graph.nodesAtPositionByWitness
+
+  const witnessesKeys = Object.keys(nodesAtPositionByWitness)
+  for (let i = 0; i < witnessesKeys.length; i++) {
+    const key = witnessesKeys[i];
+    const positions = Object.keys(nodesAtPositionByWitness[key]).sort()
+    nodesByWitness[key] = positions.map(pos => {
+      const nodeId = nodesAtPositionByWitness[key][pos]
+      return state.selectedText.graph.nodesById[nodeId]
+    })
+  }
+
+  // const nodes = Object.values(state.selectedText.graph.nodesById);
+
+  // const nodes = state.selectedText.graph.nodesAtPositionByWitness.reduce((result, nodesAtPosition, key) => ({
+  //   ...result,
+  //   [key]: Object.keys(nodesAtPosition).map()
+  // }))
   return {
-    nodes,
     witnessesCheck,
     selectedWitnesses,
     text: state.selectedText.text,
+    nodesByWitness,
   }
 }
 
