@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!-- <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico"> -->
     <!--
       Notice the use of %PUBLIC_URL% in the tag above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -27,5 +27,24 @@
       To begin the development, run `npm start`.
       To create a production bundle, use `npm run build`.
     -->
+    <script src="../src/js/jquery.js"></script>
+    <script src="./js/bootstrap.js"></script>
+    <script src="./js/basic.js"></script>
+    <script>
+      $(document).ready(function(){
+      $("#facet-witnesses").on("hide.bs.collapse", function(){
+        $(".btn-facet-witnesses-collapse").html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
+      });
+      $("#facet-witnesses").on("show.bs.collapse", function(){
+        $(".btn-facet-witnesses-collapse").html('<span class="glyphicon glyphicon-triangle-top"></span>');
+      });
+      $("#facet-graph-display-options").on("hide.bs.collapse", function(){
+        $(".btn-facet-graph-display-options-collapse").html('<span class="glyphicon glyphicon-triangle-bottom"></span>');
+      });
+      $("#facet-graph-display-options").on("show.bs.collapse", function(){
+        $(".btn-facet-graph-display-options-collapse").html('<span class="glyphicon glyphicon-triangle-top"></span>');
+      });
+      });
+    </script>
   </body>
 </html>

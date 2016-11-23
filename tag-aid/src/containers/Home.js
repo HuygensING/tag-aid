@@ -3,25 +3,29 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { setTexts } from '../actions';
 
-class Home extends Component {
+class HomeComponent extends Component {
   componentWillMount() {
     this.props.setTexts([
       {
         id: 1,
-        name: 'Parzival'
+        name: 'Parzival',
+        chronology: 'medieval'
       }
     ]);
   }
 
   render() {
-    const { texts } = this.props;
+    //const { texts } = this.props;
     return (
-      <div>
+      <div className="container big-margin">
         <h1>Texts</h1>
-        {texts.map(text => (
-          <Link to={`/tag-aid`}>
-            <div key={text.id}>{text.name}</div>
-          </Link>
+        {this.props.texts.map(text => (
+          <div key={text.id}>
+            <Link to={`/text`}>
+              <div>{text.name}</div>
+            </Link>
+            <div>{text.chronology}</div>
+          </div>
         ))}
       </div>
     );
@@ -30,10 +34,12 @@ class Home extends Component {
 
 function mapStateToProps(state) {
   return {
-    texts: state.indexTexts
+    texts: state.indexTexts // Mapping dello stato sulla prop Texts
   }
 }
 
-export default connect(mapStateToProps, {
-  setTexts
-})(Home);
+const Home = connect(mapStateToProps, {
+  setTexts // ACTION CREATOR; una funzione che fa il dispatch di una action
+})(HomeComponent); // Crea il componente Home
+
+export default Home;

@@ -23,35 +23,84 @@ class Text extends Component {
       nodesByWitness,
     } = this.props;
     return (
-      <div>
-        <h1>{title}</h1>
-        <div className="selectors">
-          <button onClick={() => getGraph(0, 20)}>0-20</button>
-          <button onClick={() => getGraph(20, 40)}>20-40</button>
-          <button onClick={() => getGraph(40, 60)}>40-60</button>
-          <div className="witnesses-check">
-            {witnessesCheck.map(witness => (
-              <div key={witness.value}>
-                <input
-                  onChange={() => toggleWitness(witness.value)}
-                  type="checkbox"
-                  checked={witness.checked}
-                  value={witness.value}
-                  name={witness.value}
-                />
-                <label htmlFor={witness.value}>{witness.value}</label>
+      <div className="container big-margin">
+        {/* TEXT NAME */}
+        <div className="text-header col-md-12 row">
+          <button className="btn-collapse-left-pane" data-toggle="collapse" data-target="#left-pane" className="btn-collapse-left-pane">
+            <span className="glyphicon glyphicon-menu-hamburger"></span>
+          </button>
+          <h1>{title}</h1>
+        </div>
+
+        {/* MAIN ROW */}
+        <div className="row">
+          <div className="col-sm-4 col-md-3 collapse in" id="left-pane">
+            {/* LEFT PANE */}
+            <div className="facet-group">
+
+              {/* SEARCH */}
+              <div className="facet">
+                <div className="input-group">
+                  <input type="text" className="form-control search" placeholder="Search token" />
+                  <span className="input-group-btn">
+                    <button className="btn btn-default" type="button"><span className="glyphicon glyphicon-search"></span></button>
+                  </span>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-        <div className="witnesses-text">
-          {selectedWitnesses.map(witness => (
-            <div key={witness}>
-              <h2>{witness}</h2>
-              <WitnessText nodes={nodesByWitness[witness] || []} />
+
+              {/* WITNESS SELECTION */}
+              <div className="facet basic-facet">
+                <h2>Witnesses</h2>
+                <button className="btn btn-facet-collapse btn-facet-witnesses-collapse pull-right" data-toggle="collapse" data-target="#facet-witnesses">
+                  <span className="glyphicon glyphicon-triangle-top"></span>
+                </button>
+                <div id="facet-witnesses" className="facet-items-box collapse in">
+                  <div className="selectors">
+                    <div className="facet-item checkbox">
+                      {witnessesCheck.map(witness => (
+                        <div key={witness.value}>
+                          <input
+                            onChange={() => toggleWitness(witness.value)}
+                            type="checkbox"
+                            checked={witness.checked}
+                            value={witness.value}
+                            name={witness.value}
+                          />
+                          <label htmlFor={witness.value}>{witness.value}</label>
+                          <div className="facet-item-color facet-item-color-grey pull-left"></div>
+                        </div>
+                      ))}
+                      </div>
+                      <button onClick={() => getGraph(0, 20)}>0-20</button>
+                      <button onClick={() => getGraph(20, 40)}>20-40</button>
+                      <button onClick={() => getGraph(40, 60)}>40-60</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
+            {/* MAIN AREA */}
+            <div className="col-sm-8 col-md-8 col-md-offset-1">
+              <div id="chart-area">
+                <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/>
+              </div>
+              {/* WITNESS TEXT */}
+              <div className="big-margin">
+                  {selectedWitnesses.map(witness => (
+                    <div className="row">
+                      <div className="col-md-2">
+                        <p className="witness-code-yellow" key={witness}>
+                          {witness}
+                        </p>
+                      </div>
+                      <div className="col-md-10">
+                          <WitnessText nodes={nodesByWitness[witness] || []} />
+                      </div>
+                    </div>
+                  ))}
+              </div> {/* END WITNESS TEXT */}
+            </div> {/* END MAIN AREA */}
+        </div> {/* END MAIN ROW */}
       </div>
     );
   }
