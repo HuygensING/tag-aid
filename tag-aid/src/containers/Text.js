@@ -87,9 +87,9 @@ class Text extends Component {
               {/* WITNESS TEXT */}
               <div className="big-margin">
                   {selectedWitnesses.map(witness => (
-                    <div className="row">
+                    <div className="row" key={witness}>
                       <div className="col-md-2">
-                        <p className="witness-code-yellow" key={witness}>
+                        <p className="witness-code-yellow">
                           {witness}
                         </p>
                       </div>
@@ -122,7 +122,7 @@ function mapStateToProps(state) {
   const witnessesKeys = Object.keys(nodesAtPositionByWitness)
   for (let i = 0; i < witnessesKeys.length; i++) {
     const key = witnessesKeys[i];
-    const positions = Object.keys(nodesAtPositionByWitness[key]).sort()
+    const positions = Object.keys(nodesAtPositionByWitness[key]).map(pos => Number(pos)).sort((a, b) => a - b)
     nodesByWitness[key] = positions.map(pos => {
       const nodeId = nodesAtPositionByWitness[key][pos]
       return state.selectedText.graph.nodesById[nodeId]
