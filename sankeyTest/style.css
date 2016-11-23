@@ -1,0 +1,31 @@
+svg {
+ /* background: #FFB6C1;*/
+}
+
+body {
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 400;
+	font-size: 11px;
+	fill: #666;
+}
+
+.node rect {
+  cursor: move;
+  fill-opacity: 1;
+  shape-rendering: crispEdges;
+}
+
+.node text {
+  cursor: move;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-opacity: .3;
+}
+
+.link:hover {
+  stroke: #FF5252;
+  stroke-opacity: .8;
+}
