@@ -94,11 +94,11 @@ export default class Graph extends Component {
         .attr("class", "node")
         .attr("transform", function(d) {
   		  return "translate(" + d.x + "," + d.y + ")"; })
-      // .call(d3.behaviorDrag()
-      //   .origin(function(d) { return d; })
-      //   .on("dragstart", function() {
-  		//   this.parentNode.appendChild(this); })
-      //   .on("drag", dragmove));
+      .call(d3.drag()
+        // .origin(function(d) { return d; })
+        .on("start", function() {
+  		  this.parentNode.appendChild(this); })
+        .on("drag", dragmove));
   //
   // // add the rectangles for the nodes
     node.append("rect")
@@ -140,7 +140,7 @@ export default class Graph extends Component {
           "translate(" + d.x + "," + (
                   d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
               ) + ")");
-      sankey.relayout();
+      sankeyLayout.relayout();
       link.attr("d", path);
     }
 
