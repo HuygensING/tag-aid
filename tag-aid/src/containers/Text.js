@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { setSelectedText, toggleWitness, getGraph } from '../actions';
 import WitnessText from '../components/WitnessText'
+import Graph from '../components/Graph'
 
 class Text extends Component {
   componentWillMount() {
@@ -82,7 +83,8 @@ class Text extends Component {
             {/* MAIN AREA */}
             <div className="col-sm-8 col-md-8 col-md-offset-1">
               <div id="chart-area">
-                <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/>
+                <Graph />
+                {/* <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/> */}
               </div>
               {/* WITNESS TEXT */}
               <div className="big-margin">
