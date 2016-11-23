@@ -4,13 +4,23 @@ import { sankey } from 'd3-sankey'
 import '../styles/graph-style.css'
 
 const margin = {top: 30, right: 50, bottom: 10, left: 30};
-    const width = 900 - margin.left - margin.right;
-    const height = 150 - margin.top - margin.bottom;
+    const width = 3000 - margin.left - margin.right;
+    const height = 300 - margin.top - margin.bottom;
 
 export default class Graph extends Component {
   componentDidMount() {
+    this.drawSankey(this.props.nodes, this.props.links);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.nodes !== this.props.nodes) || (nextProps.links !== this.props.links)) {
+      this.drawSankey(nextProps.nodes, nextProps.links);
+    }
+  }
+
+  drawSankey(allNodes, allLinks) {
     // append the svg sankey
-    const svg = d3.select(this.svg)
+    const svg = d3.select(this.svg).html('')
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -28,20 +38,21 @@ export default class Graph extends Component {
     //  .attr("transform", "translate(0,30)")
     //  .call(xAxis);
 
-      const nodePosMap = this.props.nodes.reduce((result, node, i) => ({
+      const nodePosMap = allNodes.reduce((result, node, i) => ({
         ...result,
         [node.nodeId]: i
       }), {})
 
-      const links = this.props.links.map(link => ({
+      const links = allLinks.map(link => ({
         ...link,
         source: nodePosMap[link.source],
         target: nodePosMap[link.target]
       }))
       .filter(link => link.source && link.target)
+      // FIXME: Do the right sort before
       .sort((a, b) => a.source - b.source)
 
-      const nodes = [...this.props.nodes]
+      const nodes = [...allNodes]
 
     const sankeyLayout = sankey()
         .nodes(nodes)
@@ -84,7 +95,7 @@ export default class Graph extends Component {
   //
   // // add the rectangles for the nodes
     node.append("rect")
-        .attr("height", function(d) { return d.dy; })
+        .attr("height", function(d) { return Math.abs(d.dy); })
         .attr("width", 2)
         .style("fill", "#ddd")
         .style("opacity", 1)
