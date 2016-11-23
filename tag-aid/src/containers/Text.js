@@ -22,6 +22,9 @@ class Text extends Component {
       toggleWitness,
       getGraph,
       nodesByWitness,
+      linksByWitness,
+      allNodes,
+      allLinks,
     } = this.props;
     return (
       <div className="container big-margin">
@@ -83,9 +86,11 @@ class Text extends Component {
             {/* MAIN AREA */}
             <div className="col-sm-8 col-md-8 col-md-offset-1">
               <div id="chart-area">
-                <Graph />
-                {/* <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/> */}
+                {selectedWitnesses.map(witness => (
+                  <Graph key={witness} nodes={allNodes} links={allLinks} />
+                ))}
               </div>
+              {/* <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/> */}
               {/* WITNESS TEXT */}
               <div className="big-margin">
                   {selectedWitnesses.map(witness => (
@@ -131,6 +136,32 @@ function mapStateToProps(state) {
     })
   }
 
+  const linksByWitness = {};
+  const linksByNodes = state.selectedText.graph.linksByNodes;
+
+  for (let i = 0; i < witnessesKeys.length; i++) {
+    const key = witnessesKeys[i];
+
+    const positions = Object.keys(nodesAtPositionByWitness[key]).map(pos => Number(pos)).sort((a, b) => a - b)
+    linksByWitness[key] = positions.map(pos => {
+      const nodeId = nodesAtPositionByWitness[key][pos]
+      return Object.keys(linksByNodes[nodeId])
+    })
+    .reduce((result, links) => [...result, ...links], [])
+    .map(linkId => state.selectedText.graph.linksById[linkId])
+  }
+
+  const allNodes = Object.keys(nodesAtPositionByWitness).reduce((result, witness) => {
+    return [...result, ...Object.values(nodesAtPositionByWitness[witness]).filter(id => result.indexOf(id) === -1)]
+  }, []).map(id => state.selectedText.graph.nodesById[id])
+
+  const allLinks = allNodes.reduce((result, node) => {
+    return [...result, ...Object.keys(linksByNodes[node.nodeId]).filter(id => result.indexOf(id) === -1)]
+  }, []).map(linkId => state.selectedText.graph.linksById[linkId])
+  // console.log(allLinks)
+  // console.log(allNodes)
+
+
   // const nodes = Object.values(state.selectedText.graph.nodesById);
 
   // const nodes = state.selectedText.graph.nodesAtPositionByWitness.reduce((result, nodesAtPosition, key) => ({
@@ -142,6 +173,9 @@ function mapStateToProps(state) {
     selectedWitnesses,
     text: state.selectedText.text,
     nodesByWitness,
+    linksByWitness,
+    allNodes,
+    allLinks,
   }
 }
 

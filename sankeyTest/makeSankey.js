@@ -8,7 +8,7 @@ var svgPositionGeneral = d3.select("#positionGeneral").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height-120 + margin.top + margin.bottom)
   .append("g")
-    .attr("transform", 
+    .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")")
 
 // append the svg histogram
@@ -16,7 +16,7 @@ var svgHist = d3.select("#histogram").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
-    .attr("transform", 
+    .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
 // SANKEY
@@ -25,15 +25,15 @@ var svgPosition = d3.select("#position").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height-100 + margin.top + margin.bottom)
   .append("g")
-    .attr("transform", 
-          "translate(" + margin.left + "," + margin.top + ")");    
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
 
 // append the svg sankey
 var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
-    .attr("transform", 
+    .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
 
@@ -47,7 +47,7 @@ svgPositionGeneral.append("line")          // attach a line
     .attr("x1", 0)     // x position of the first end of the line
     .attr("y1", 0)      // y position of the first end of the line
     .attr("x2", width)     // x position of the second end of the line
-    .attr("y2", 0);  
+    .attr("y2", 0);
 
 for (var i = 0; i <= width+width/188; i += width/188) {
   svgPositionGeneral.append("line")          // attach a line
@@ -55,7 +55,7 @@ for (var i = 0; i <= width+width/188; i += width/188) {
     .attr("x1", i)     // x position of the first end of the line
     .attr("y1", -5)      // y position of the first end of the line
     .attr("x2", i)     // x position of the second end of the line
-    .attr("y2", 5);  
+    .attr("y2", 5);
 }
 
 var dataset;
@@ -98,7 +98,7 @@ function generateBars(){
     //   return d3.rgb(255-d.number*25,255-d.number*25,255-d.number*25);
     // })
     // .attr("opacity", .5)
-    // .attr({ry : borderRadiusX, rx : borderRadiusY }); 
+    // .attr({ry : borderRadiusX, rx : borderRadiusY });
   };
 
 // SANKEY
@@ -135,7 +135,7 @@ var unitsPlural = "Witnesses";
 var unitsSingular = "Witness";
 
 var formatNumber = d3.format(",.0f"),    // zero decimal places
-    
+
     format = function(d) {
     	if (formatNumber(d) > 1 ) {
     		return formatNumber(d) + " " + unitsPlural;
@@ -154,20 +154,20 @@ var sankey = d3.sankey()
 var path = sankey.link();
 
 // load the data
-d3.json("test.json", function(error, graph) {
-	// console.log(graph);
+d3.json("test2.json", function(error, graph) {
+  console.log(graph);
 
-    var nodeMap = {};
-    graph.nodes.forEach(function(x) {
-    	nodeMap[x.name] = x;
-    });
-    graph.links = graph.links.map(function(x) {
-      return {
-        source: nodeMap[x.source],
-        target: nodeMap[x.target],
-        value: x.value
-      };
-    });
+    // var nodeMap = {};
+    // graph.nodes.forEach(function(x) {
+    // 	nodeMap[x.name] = x;
+    // });
+    // graph.links = graph.links.map(function(x) {
+    //   return {
+    //     source: nodeMap[x.source],
+    //     target: nodeMap[x.target],
+    //     value: x.value
+    //   };
+    // });
 
   sankey
       .nodes(graph.nodes)
@@ -187,19 +187,21 @@ d3.json("test.json", function(error, graph) {
 // add the link titles
   link.append("title")
         .text(function(d) {
-    		return d.source.name + " → " + 
-                d.target.name + "\n" + format(d.value); });
+          return 'x'
+    		// return d.source.linkId + " → " +
+        //         d.target.linkId + "\n" + format(d.value);
+              });
 
 // add in the nodes
   var node = svg.append("g").selectAll(".node")
       .data(graph.nodes)
     .enter().append("g")
       .attr("class", "node")
-      .attr("transform", function(d) { 
+      .attr("transform", function(d) {
 		  return "translate(" + d.x + "," + d.y + ")"; })
     .call(d3.behavior.drag()
       .origin(function(d) { return d; })
-      .on("dragstart", function() { 
+      .on("dragstart", function() {
 		  this.parentNode.appendChild(this); })
       .on("drag", dragmove));
 
@@ -210,7 +212,7 @@ d3.json("test.json", function(error, graph) {
       .style("fill", "#ddd")
       .style("opacity", 1)
     .append("title")
-      .text(function(d) { 
+      .text(function(d) {
 		  return d.name + "\n" + format(d.value) + "\n" + d.majority; })
 
 // add circles on top of the rectangles
@@ -238,7 +240,7 @@ d3.json("test.json", function(error, graph) {
 
 // the function for moving the nodes
   function dragmove(d) {
-    d3.select(this).attr("transform", 
+    d3.select(this).attr("transform",
         "translate(" + d.x + "," + (
                 d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
             ) + ")");
