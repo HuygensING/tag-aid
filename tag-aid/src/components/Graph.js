@@ -63,6 +63,7 @@ export default class Graph extends Component {
         .layout(32);
 
   const path = sankeyLayout.link();
+  const colorScale = d3.scaleOrdinal(this.props.witnesses);
 
   // add in the links
     var link = svg.append("g").selectAll(".link")
@@ -71,6 +72,12 @@ export default class Graph extends Component {
         .attr("class", "link")
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
+        .style("stroke",(d) => {
+          if (d.witnesses.indexOf(this.props.witness) !== -1) {
+            return colorScale[this.props.witness];
+          }
+          return '#f0f0f0';
+        })
         // .style("stroke-width", 5)
         .sort(function(a, b) { return b.dy - a.dy; });
   //
@@ -87,11 +94,11 @@ export default class Graph extends Component {
         .attr("class", "node")
         .attr("transform", function(d) {
   		  return "translate(" + d.x + "," + d.y + ")"; })
-      // .call(d3.behavior.drag()
+      // .call(d3.behaviorDrag()
       //   .origin(function(d) { return d; })
       //   .on("dragstart", function() {
   		//   this.parentNode.appendChild(this); })
-        // .on("drag", dragmove));
+      //   .on("drag", dragmove));
   //
   // // add the rectangles for the nodes
     node.append("rect")
@@ -128,14 +135,14 @@ export default class Graph extends Component {
         .text(function(d) { return d.word; });
   //
   // // the function for moving the nodes
-  //   function dragmove(d) {
-  //     d3.select(this).attr("transform",
-  //         "translate(" + d.x + "," + (
-  //                 d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
-  //             ) + ")");
-  //     sankey.relayout();
-  //     link.attr("d", path);
-  //   }
+    function dragmove(d) {
+      d3.select(this).attr("transform",
+          "translate(" + d.x + "," + (
+                  d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
+              ) + ")");
+      sankey.relayout();
+      link.attr("d", path);
+    }
 
   }
 

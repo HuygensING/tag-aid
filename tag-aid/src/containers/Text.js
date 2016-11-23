@@ -87,7 +87,7 @@ class Text extends Component {
             <div className="col-sm-8 col-md-8 col-md-offset-1">
               <div id="chart-area">
                 {selectedWitnesses.map(witness => (
-                  <Graph key={witness} nodes={allNodes} links={allLinks} />
+                  <Graph key={witness} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
                 ))}
               </div>
               {/* <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/> */}
