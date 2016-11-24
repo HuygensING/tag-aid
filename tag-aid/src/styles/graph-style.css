@@ -1,5 +1,6 @@
 svg {
  /* background: #FFB6C1;*/
+ border-bottom: 1px solid #ddd;
 }
 
 .node rect {
@@ -15,10 +16,15 @@ svg {
 .link {
   fill: none;
   stroke: #ccc;
-  stroke-opacity: .3;
+  /*stroke-opacity: 1;*/
 }
 
 .link:hover {
   stroke: #FF5252;
   stroke-opacity: .8;
+}
+
+.word {
+  font-size: .75em;
+  /*font-weight: 600;*/
 }

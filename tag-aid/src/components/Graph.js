@@ -1,11 +1,11 @@
 import React, { PropTypes, Component } from 'react';
-import * as d3 from 'd3'
-import { sankey } from 'd3-sankey'
-import '../styles/graph-style.css'
+import * as d3 from 'd3';
+import { sankey } from 'd3-sankey';
+import '../styles/graph-style.css';
 
-const margin = {top: 30, right: 50, bottom: 10, left: 30};
-    const width = 3000 - margin.left - margin.right;
-    const height = 300 - margin.top - margin.bottom;
+const margin = {top: 40, right: 50, bottom: 40, left: 20};
+    const width = 1000 - margin.left - margin.right;
+    const height = 200 - margin.top - margin.bottom;
 
 export default class Graph extends Component {
   componentDidMount() {
@@ -38,32 +38,33 @@ export default class Graph extends Component {
     //  .attr("transform", "translate(0,30)")
     //  .call(xAxis);
 
-      const nodePosMap = allNodes.reduce((result, node, i) => ({
-        ...result,
-        [node.nodeId]: i
-      }), {})
+    const nodePosMap = allNodes.reduce((result, node, i) => ({
+      ...result,
+      [node.nodeId]: i
+    }), {})
 
-      const links = allLinks.map(link => ({
-        ...link,
-        source: nodePosMap[link.source],
-        target: nodePosMap[link.target]
-      }))
-      .filter(link => link.source && link.target)
-      // FIXME: Do the right sort before
-      .sort((a, b) => a.source - b.source)
+    const links = allLinks.map(link => ({
+      ...link,
+      source: nodePosMap[link.source],
+      target: nodePosMap[link.target]
+    }))
+    .filter(link => link.source && link.target)
+    // FIXME: Do the right sort before
+    .sort((a, b) => a.source - b.source)
 
-      const nodes = [...allNodes]
+    const nodes = [...allNodes]
 
     const sankeyLayout = sankey()
         .nodes(nodes)
         .links(links)
         .nodeWidth(2)
-        .nodePadding(45)
+        .nodePadding(35)
         .size([width, height])
-        .layout(32);
+        .layout(150);
 
   const path = sankeyLayout.link();
   const colorScale = d3.scaleOrdinal(this.props.witnesses);
+
 
   // add in the links
     var link = svg.append("g").selectAll(".link")
@@ -127,6 +128,7 @@ export default class Graph extends Component {
   //
   // // add in the title for the nodes
     node.append("text")
+        .attr("class", "word")
         .attr("x", 0)
         .attr("y", function(d) { return -11; })
         .attr("dy", ".35em")

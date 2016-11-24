@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, IndexLink } from 'react-router'
+import { Link } from 'react-router'
 
 const MainNav = () => {
   return (
@@ -16,7 +16,7 @@ const MainNav = () => {
           </div>
           <div id="navbar" className="navbar-collapse collapse">
             <ul className="nav navbar-nav navbar-right">
-              <li><IndexLink to="/">Texts</IndexLink></li>
+              <li><Link to="/">Texts</Link></li>
               <li><Link to="/help">Help</Link></li>
               <li><Link to="/about">About</Link></li>
             </ul>

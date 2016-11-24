@@ -38,7 +38,7 @@ class Text extends Component {
 
         {/* MAIN ROW */}
         <div className="row">
-          <div className="col-sm-4 col-md-3 collapse in" id="left-pane">
+          <div className="col-sm-3 col-md-2 collapse in" id="left-pane">
             {/* LEFT PANE */}
             <div className="facet-group">
 
@@ -56,7 +56,7 @@ class Text extends Component {
               <div className="facet basic-facet">
                 <h2>Witnesses</h2>
                 <button className="btn btn-facet-collapse btn-facet-witnesses-collapse pull-right" data-toggle="collapse" data-target="#facet-witnesses">
-                  <span className="glyphicon glyphicon-triangle-top"></span>
+
                 </button>
                 <div id="facet-witnesses" className="facet-items-box collapse in">
                   <div className="selectors">
@@ -84,7 +84,7 @@ class Text extends Component {
               </div>
             </div>
             {/* MAIN AREA */}
-            <div className="col-sm-8 col-md-8 col-md-offset-1">
+            <div className="col-sm-9 col-md-9 col-md-offset-1">
               <div id="chart-area">
                 {selectedWitnesses.map(witness => (
                   <Graph key={witness} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
@@ -95,12 +95,12 @@ class Text extends Component {
               <div className="big-margin">
                   {selectedWitnesses.map(witness => (
                     <div className="row" key={witness}>
-                      <div className="col-md-2">
+                      <div className="col-md-1">
                         <p className="witness-code-yellow">
                           {witness}
                         </p>
                       </div>
-                      <div className="col-md-10">
+                      <div className="col-md-11">
                           <WitnessText nodes={nodesByWitness[witness] || []} />
                       </div>
                     </div>
