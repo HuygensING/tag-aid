@@ -11,14 +11,13 @@ import Home from './containers/Home';
 import About from './components/About';
 import Help from './components/Help';
 import Text from './containers/Text';
-import reactBootstrap from 'react-bootstrap';
-
 
 // stylesheets
 // import bootstrapStyle from './styles/bootstrap.css';
-import hiStyle  from './styles/hi-style.css';
-import hiInterfaceStyle  from './styles/hi-interface.css';
-import hiTagaidStyle from './styles/hi-tag-aid.css';
+import './styles/hi-style.css';
+import './styles/hi-interface.css';
+import './styles/hi-tag-aid.css';
+
 
 // import TagAid from './components/TagAid';
 

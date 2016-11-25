@@ -63,7 +63,27 @@ export default class Graph extends Component {
         .layout(150);
 
   const path = sankeyLayout.link();
-  const colorScale = d3.scaleOrdinal(this.props.witnesses);
+  const colors = ["#F34336",
+                  "#E81E63",
+                  "#9B27AF",
+                  "#673AB6",
+                  "#3F51B4",
+                  "#2195F2",
+                  "#03A8F3",
+                  "#00BBD3",
+                  "#009587",
+                  "#4CAE50",
+                  "#8AC24A",
+                  "#CCDB39",
+                  "#FEEA3B",
+                  "#FEC007",
+                  "#FE9700",
+                  "#FE5722"];
+  const colorScale = d3.scaleOrdinal()
+                      .domain(this.props.witnesses)
+                      .range(colors);
+
+  console.log(this.props.witnesses);
 
 
   // add in the links
@@ -75,7 +95,7 @@ export default class Graph extends Component {
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
         .style("stroke",(d) => {
           if (d.witnesses.indexOf(this.props.witness) !== -1) {
-            return colorScale[this.props.witness];
+            return colorScale(this.props.witness);
           }
           return '#f0f0f0';
         })
@@ -123,8 +143,7 @@ export default class Graph extends Component {
   	      	} else {
   	      		return "#aaa";
   	      	}
-        	})
-        .style("opacity", 1);
+        	});
   //
   // // add in the title for the nodes
     node.append("text")

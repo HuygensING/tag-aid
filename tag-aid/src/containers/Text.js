@@ -2,8 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { setSelectedText, toggleWitness, getGraph } from '../actions';
-import WitnessText from '../components/WitnessText'
-import Graph from '../components/Graph'
+import WitnessText from '../components/WitnessText';
+import Graph from '../components/Graph';
+import { Grid, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
+import '../styles/hi-faceted-search.css';
+
 
 class Text extends Component {
   componentWillMount() {
@@ -27,88 +30,90 @@ class Text extends Component {
       allLinks,
     } = this.props;
     return (
-      <div className="container big-margin">
-        {/* TEXT NAME */}
-        <div className="text-header col-md-12 row">
-          <button className="btn-collapse-left-pane" data-toggle="collapse" data-target="#left-pane" className="btn-collapse-left-pane">
-            <span className="glyphicon glyphicon-menu-hamburger"></span>
-          </button>
-          <h1>{title}</h1>
-        </div>
-
-        {/* MAIN ROW */}
-        <div className="row">
-          <div className="col-sm-3 col-md-2 collapse in" id="left-pane">
-            {/* LEFT PANE */}
-            <div className="facet-group">
-
-              {/* SEARCH */}
-              <div className="facet">
-                <div className="input-group">
-                  <input type="text" className="form-control search" placeholder="Search token" />
-                  <span className="input-group-btn">
-                    <button className="btn btn-default" type="button"><span className="glyphicon glyphicon-search"></span></button>
-                  </span>
+      <Grid>
+          {/* TEXT NAME */}
+          <Row>
+            <Col md={12} className="text-header">
+              <Button bsClass="btn-collapse-left-pane" componentClass="btn-collapse-left-pane">
+                <span className="glyphicon glyphicon-menu-hamburger"></span>
+              </Button>
+              <h1>{title}</h1>
+            </Col>
+          </Row>
+          {/* MAIN ROW */}
+          <Row>
+            <Col sm={3} md={2} id="left-pane">
+              {/* LEFT PANE */}
+              <div className="facet-group">
+                {/* SEARCH */}
+                <div className="facet">
+                  <InputGroup>
+                    <FormControl type="text" className="form-control search" placeholder="Search token" />
+                      <span className="input-group-btn">
+                        <Button bsClass="btn btn-default">
+                          <span className="glyphicon glyphicon-search"></span>
+                        </Button>
+                      </span>
+                  </InputGroup>
                 </div>
-              </div>
 
-              {/* WITNESS SELECTION */}
-              <div className="facet basic-facet">
-                <h2>Witnesses</h2>
-                <button className="btn btn-facet-collapse btn-facet-witnesses-collapse pull-right" data-toggle="collapse" data-target="#facet-witnesses">
+                {/* WITNESS SELECTION */}
+                <div className="facet basic-facet">
+                  <h2>Witnesses</h2>
+                  <button className="btn btn-facet-collapse btn-facet-witnesses-collapse pull-right" data-toggle="collapse" data-target="#facet-witnesses">
 
-                </button>
-                <div id="facet-witnesses" className="facet-items-box collapse in">
-                  <div className="selectors">
-                    <div className="facet-item checkbox">
-                      {witnessesCheck.map(witness => (
-                        <div key={witness.value}>
-                          <input
-                            onChange={() => toggleWitness(witness.value)}
-                            type="checkbox"
-                            checked={witness.checked}
-                            value={witness.value}
-                            name={witness.value}
-                          />
-                          <label htmlFor={witness.value}>{witness.value}</label>
-                          <div className="facet-item-color facet-item-color-grey pull-left"></div>
+                  </button>
+                  <div id="facet-witnesses" className="facet-items-box collapse in">
+                    <div className="selectors">
+                      <div className="facet-item checkbox">
+                        {witnessesCheck.map(witness => (
+                          <div key={witness.value}>
+                            <input
+                              onChange={() => toggleWitness(witness.value)}
+                              type="checkbox"
+                              checked={witness.checked}
+                              value={witness.value}
+                              name={witness.value}
+                            />
+                            <label htmlFor={witness.value}>{witness.value}</label>
+                            <div className="facet-item-color facet-item-color-grey pull-left"></div>
+                          </div>
+                        ))}
                         </div>
-                      ))}
+                        <button onClick={() => getGraph(0, 20)}>0-20</button>
+                        <button onClick={() => getGraph(20, 40)}>20-40</button>
+                        <button onClick={() => getGraph(40, 60)}>40-60</button>
                       </div>
-                      <button onClick={() => getGraph(0, 20)}>0-20</button>
-                      <button onClick={() => getGraph(20, 40)}>20-40</button>
-                      <button onClick={() => getGraph(40, 60)}>40-60</button>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            {/* MAIN AREA */}
-            <div className="col-sm-9 col-md-9 col-md-offset-1">
-              <div id="chart-area">
-                {selectedWitnesses.map(witness => (
-                  <Graph key={witness} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
-                ))}
-              </div>
-              {/* <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/> */}
-              {/* WITNESS TEXT */}
-              <div className="big-margin">
+              </Col>
+              {/* MAIN AREA */}
+              <Col sm={9} md={9} mdOffset={1}>
+                <div id="chart-area">
                   {selectedWitnesses.map(witness => (
-                    <div className="row" key={witness}>
-                      <div className="col-md-1">
-                        <p className="witness-code-yellow">
-                          {witness}
-                        </p>
-                      </div>
-                      <div className="col-md-11">
-                          <WitnessText nodes={nodesByWitness[witness] || []} />
-                      </div>
-                    </div>
+                    <Graph key={witness} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
                   ))}
-              </div> {/* END WITNESS TEXT */}
-            </div> {/* END MAIN AREA */}
-        </div> {/* END MAIN ROW */}
-      </div>
+                </div>
+                {/* <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/> */}
+                {/* WITNESS TEXT */}
+                <div>
+                    {selectedWitnesses.map(witness => (
+                      <div className="row" key={witness}>
+                        <div className="col-md-1">
+                          <p className="witness-code-yellow">
+                            {witness}
+                          </p>
+                        </div>
+                        <div className="col-md-11">
+                            <WitnessText nodes={nodesByWitness[witness] || []} />
+                        </div>
+                      </div>
+                    ))}
+                </div> {/* END WITNESS TEXT */}
+              </Col> {/* END MAIN AREA */}
+          </Row> {/* END MAIN ROW */}
+      </Grid>
     );
   }
 }

@@ -1,28 +1,36 @@
 import React from 'react';
-import { Link } from 'react-router'
+import { Link, IndexLink } from 'react-router';
+import { Nav, Navbar, NavItem, Image } from 'react-bootstrap';
+import { IndexLinkContainer, LinkContainer } from 'react-router-bootstrap';
 
 const MainNav = () => {
   return (
     <div className="basic-margin hi-Green container-fluid">
-      <nav className="navbar ">
-        <div className="container">
-          <div className="navbar-header">
-            <a className="navbar-brand" href="#">
-              <img className="img-responsive"
-              src="https://placeholdit.imgix.net/~text?txtsize=10&bg=cccccc&txtclr=ffffff&txt=%5BTAG-AID+logo%5D&w=150&h=20&txttrack=0"
-              className="logo"
-              alt=""/>
-            </a>
-          </div>
-          <div id="navbar" className="navbar-collapse collapse">
-            <ul className="nav navbar-nav navbar-right">
-              <li><Link to="/">Texts</Link></li>
-              <li><Link to="/help">Help</Link></li>
-              <li><Link to="/about">About</Link></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+    <Navbar>
+      <div className="container">
+        <Navbar.Header>
+          <Navbar.Brand a href="#">
+            <Image responsive
+            src="https://placeholdit.imgix.net/~text?txtsize=10&bg=cccccc&txtclr=ffffff&txt=%5BTAG-AID+logo%5D&w=150&h=20&txttrack=0"
+            className="logo"
+            alt=""/>
+          </Navbar.Brand>
+        </Navbar.Header>
+        <Navbar.Collapse>
+          <Nav pullRight>
+            <IndexLinkContainer to="/">
+              <NavItem>Texts</NavItem>
+            </IndexLinkContainer>
+            <LinkContainer to="/help">
+              <NavItem>Help</NavItem>
+            </LinkContainer>
+            <LinkContainer to="/about">
+              <NavItem>About</NavItem>
+            </LinkContainer>
+          </Nav>
+        </Navbar.Collapse>
+      </div>
+    </Navbar>
     </div>
   )
 }

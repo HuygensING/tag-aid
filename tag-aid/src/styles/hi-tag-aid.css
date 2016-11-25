@@ -1,7 +1,14 @@
 /* Bootstrap OVERRIDE */
 
-.navbar, .navbar a {
+.navbar-default .navbar-nav>li>a {
 	margin-bottom: 0;
+	color: #fff;
+}
+
+.navbar {
+	margin-bottom: 0;
+	background: transparent;
+	border: none;
 }
 
 .checkbox label{
@@ -9,6 +16,20 @@
 }
 
 /* Hi-style */
+
+body {
+	font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 16px;
+	line-height: 1.42857143;
+	color: #333333;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: "Secular One";
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+}
 
 .text-header {
 	margin-bottom: 45px;
@@ -219,7 +240,7 @@ input[type=range]:focus::-ms-fill-upper {
     margin-left: 0;
 }
 .onoffswitch-checkbox:checked + .onoffswitch-label:before {
-    right: 0px; 
+    right: 0px;
     background-color: #269075;
 }
 
