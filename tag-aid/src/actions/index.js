@@ -16,6 +16,12 @@ export const toggleWitness = (witness) => ({
   payload: witness
 });
 
+export const SET_VIEWED_POSITION = 'SET_VIEWED_POSITION';
+export const setViewedPosition = (start, end) => ({
+  type: SET_VIEWED_POSITION,
+  payload: { start, end }
+});
+
 export const GET_GRAPH = 'GET_GRAPH';
 export const GET_GRAPH_LOADING = 'GET_GRAPH_LOADING';
 export const GET_GRAPH_FAILURE = 'GET_GRAPH_FAILURE';

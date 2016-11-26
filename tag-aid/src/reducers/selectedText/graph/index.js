@@ -4,6 +4,7 @@ const defaultState = {
   nodesById: {},
   linksById: {},
   loadedPositions: {},
+  nodesAtPosition: {},
   nodesAtPositionByWitness: {},
   linksByNodes: {},
 };
@@ -34,6 +35,14 @@ export default (previousState = defaultState, { type, payload }) => {
     for (let i = start;i <= end;i++) {
       newLoadedPosition[i] = true;
     }
+
+    const newNodesAtPosition = graph.nodes.reduce((result, node) => ({
+      ...result,
+      [node.pos]: {
+        ...(result[node.pos] || {}),
+        [node.nodeId]: true
+      }
+    }), previousState.nodesAtPosition)
 
     const newNodesAtPositionByWitness = graph.links.reduce((result, link) => {
       const nodeSource = newNodesById[link.source];
@@ -71,6 +80,7 @@ export default (previousState = defaultState, { type, payload }) => {
         ...previousState.loadedPositions,
         ...newLoadedPosition
       },
+      nodesAtPosition: newNodesAtPosition,
       nodesAtPositionByWitness: newNodesAtPositionByWitness,
       linksByNodes: newLinksByNodes,
     }

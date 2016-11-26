@@ -6,7 +6,7 @@ const WitnessText = (props) => {
     <div className="witness-text">
       <p>
       {props.nodes.map((node, idx) => (
-        <span key={node.nodeId}>{node.word}</span>
+        <span key={node.nodeId} className={node.viewed ? 'pos-viewed-in-text' : ''}>{node.word}</span>
       ))}
       </p>
     </div>
