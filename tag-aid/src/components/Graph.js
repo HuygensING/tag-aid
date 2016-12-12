@@ -19,13 +19,23 @@ export default class Graph extends Component {
   }
 
   drawSankey(allNodes, allLinks) {
+
+    const graphDrag = function(d, evt) {
+      console.log("dragged", d3.event.x, d3.event.dx)
+
+
+      //.attr("transform","translate(" + d3.event.x + ", 0)");
+    }
+
     // append the svg sankey
     const svg = d3.select(this.svg).html('')
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
+      .call(d3.drag().on("drag", graphDrag))
         .attr("transform",
               "translate(" + margin.left + "," + margin.top + ")");
+        //
 
     const xScale = d3
       .scaleLinear()
