@@ -53,15 +53,13 @@ export default class Graph extends Component {
     .sort((a, b) => Number(a.source) - Number(b.source))
 
     const nodes = [...allNodes]
-    console.log(nodes)
-    console.log(links)
 
     const sankeyLayout = sankey()
         .nodes(nodes)
         .links(links)
         .nodeWidth(2)
         .nodePadding(35)
-        .size([width, height])
+        .size([width * 2, height])
         .layout(150);
 
   const path = sankeyLayout.link();

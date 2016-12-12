@@ -17,14 +17,13 @@ class Text extends Component {
       witnesses: WITNESSES.map(({ sigil }) => sigil)
     })
     this.props.setViewedPosition(0, 20);
-    this.props.getGraph(0, 20);
-    this.props.getGraph(20, 40);
-    this.props.getGraph(40, 60);
+    // this.props.getGraph(0, 400);
   }
 
   render() {
     const {
       text: { title, witnesses },
+      viewedPosition,
       witnessesCheck,
       selectedWitnesses,
       toggleWitness,
@@ -99,6 +98,9 @@ class Text extends Component {
               </Col>
               {/* MAIN AREA */}
               <Col sm={9} md={9} mdOffset={1}>
+                <h2>{viewedPosition.start} {viewedPosition.end}</h2>
+                <button onClick={() => setViewedPosition(viewedPosition.start - 10, viewedPosition.end - 10)}>-10</button>
+                <button onClick={() => setViewedPosition(viewedPosition.start + 10, viewedPosition.end + 10)}>+10</button>
                 <div id="chart-area">
                   {selectedWitnesses.map(witness => (
                     <Graph key={witness} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />

@@ -52,7 +52,7 @@ export const getSankeyNodes = createSelector(
   getNodesById,
   getNodesAtPosition,
   getViewedPosition,
-  (nodesById, nodesAtPosition, { start, end }) => range(start, end + 1)
+  (nodesById, nodesAtPosition, { start, end }) => range(start, end + 1 + 20)
     .reduce((result, pos) => [...result, ...Object.keys(nodesAtPosition[pos] || {})], [])
     .map(nodeId => nodesById[nodeId])
 )
