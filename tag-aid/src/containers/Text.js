@@ -103,7 +103,7 @@ class Text extends Component {
                 <button onClick={() => setViewedPosition(viewedPosition.start + 10, viewedPosition.end + 10)}>+10</button>
                 <div id="chart-area">
                   {selectedWitnesses.map(witness => (
-                    <Graph key={witness} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
+                    <Graph key={witness} viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
                   ))}
                 </div>
                 {/* <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/> */}

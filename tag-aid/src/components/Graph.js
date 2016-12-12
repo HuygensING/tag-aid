@@ -19,12 +19,22 @@ export default class Graph extends Component {
   }
 
   drawSankey(allNodes, allLinks) {
+    const { setViewedPosition, viewedPosition } = this.props;
+
 
     const graphDrag = function(d, evt) {
-      console.log("dragged", d3.event.x, d3.event.dx)
-
-
+      const dx = Number(d3.select(this).attr('dx') || 0) + Math.abs(d3.event.dx)
+      d3.select(this).attr('dx', dx)
+      if (dx > 10) {
+        setViewedPosition(viewedPosition.start + 1, viewedPosition.end + 1)
+      }
       //.attr("transform","translate(" + d3.event.x + ", 0)");
+    }
+
+    const graphDragEnd = function(d, evt) {
+      // const movedPosition = Math.round(d3.select(this).attr('dx') / 45)
+      d3.select(this).attr('dx', 0)
+      // setViewedPosition(viewedPosition.start + movedPosition, viewedPosition.end + movedPosition)
     }
 
     // append the svg sankey
@@ -32,7 +42,7 @@ export default class Graph extends Component {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
       .append("g")
-      .call(d3.drag().on("drag", graphDrag))
+      .call(d3.drag().on("drag", graphDrag).on("end", graphDragEnd))
         .attr("transform",
               "translate(" + margin.left + "," + margin.top + ")");
         //
