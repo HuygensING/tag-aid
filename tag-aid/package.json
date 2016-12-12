@@ -2,6 +2,7 @@
   "name": "tag-aid",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://tag-aid.huygens.knaw.nl",
   "devDependencies": {
     "react-scripts": "0.7.0"
   },

@@ -40,7 +40,7 @@ export default class Graph extends Component {
 
     const nodePosMap = allNodes.reduce((result, node, i) => ({
       ...result,
-      [node.nodeId]: i
+      [node.id]: i
     }), {})
 
     const links = allLinks.map(link => ({
@@ -48,11 +48,13 @@ export default class Graph extends Component {
       source: nodePosMap[link.source],
       target: nodePosMap[link.target]
     }))
-    .filter(link => link.source && link.target)
+    .filter(link => typeof link.source !== 'undefined' && typeof link.target !== 'undefined')
     // FIXME: Do the right sort before
-    .sort((a, b) => a.source - b.source)
+    .sort((a, b) => Number(a.source) - Number(b.source))
 
     const nodes = [...allNodes]
+    console.log(nodes)
+    console.log(links)
 
     const sankeyLayout = sankey()
         .nodes(nodes)
@@ -83,7 +85,6 @@ export default class Graph extends Component {
                       .domain(this.props.witnesses)
                       .range(colors);
 
-  console.log(this.props.witnesses);
 
 
   // add in the links
@@ -94,7 +95,7 @@ export default class Graph extends Component {
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
         .style("stroke",(d) => {
-          if (d.witnesses.indexOf(this.props.witness) !== -1) {
+          if (d.witness.indexOf(this.props.witness) !== -1) {
             return colorScale(this.props.witness);
           }
           return '#f0f0f0';
@@ -129,7 +130,7 @@ export default class Graph extends Component {
         .style("opacity", 1)
       .append("title")
         .text(d => {
-          return d.word
+          return d.text
         })
   //
   // // add circles on top of the rectangles
@@ -153,7 +154,7 @@ export default class Graph extends Component {
         .attr("dy", ".35em")
         .attr("text-anchor", "middle")
         .attr("transform", null)
-        .text(function(d) { return d.word; });
+        .text(function(d) { return d.text; });
   //
   // // the function for moving the nodes
     function dragmove(d) {

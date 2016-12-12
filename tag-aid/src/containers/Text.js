@@ -8,12 +8,13 @@ import Graph from '../components/Graph';
 import { Grid, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import '../styles/hi-faceted-search.css';
 
+const WITNESSES = [{"sigil":"Kr299"},{"sigil":"MuU151"},{"sigil":"Mu11475"},{"sigil":"Kf133"},{"sigil":"Gr314"},{"sigil":"Go325"},{"sigil":"An74"},{"sigil":"Er16"},{"sigil":"Kr185"},{"sigil":"Mu22405"},{"sigil":"Au318"},{"sigil":"Wi3818"},{"sigil":"Mu28315"},{"sigil":"Ba96"},{"sigil":"Sg524"}]
 
 class Text extends Component {
   componentWillMount() {
     this.props.setSelectedText({
       title: 'Parzival',
-      witnesses: ["D", "Fr21", "Fr69", "G", "I", "L", "M", "Mk", "O", "Ok", "Q", "R", "T", "U", "V", "Z"]
+      witnesses: WITNESSES.map(({ sigil }) => sigil)
     })
     this.props.setViewedPosition(0, 20);
     this.props.getGraph(0, 20);
@@ -135,6 +136,7 @@ function mapStateToProps(state) {
   const nodesByWitness = getTextNodesByWitness(state)
   const allNodes = getSankeyNodes(state)
   const allLinks = getSankeyLinks(state)
+  console.log(nodesByWitness)
   // console.log(allNodes)
   // console.info(nodesByWitness)
   // const nodesByWitness = {}

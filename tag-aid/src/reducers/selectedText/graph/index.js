@@ -11,9 +11,9 @@ const defaultState = {
 export default (previousState = defaultState, { type, payload }) => {
   if (type === GET_GRAPH_SUCCESS) {
     const { graph, start, end } = payload;
-    const mergedNodesById = graph.nodes.reduce((result, node) => ({
+    const mergedNodesById = graph.readings.reduce((result, node) => ({
       ...result,
-      [node.nodeId]: node
+      [node.id]: node
     }), {})
 
     const newNodesById = {
@@ -21,9 +21,9 @@ export default (previousState = defaultState, { type, payload }) => {
       ...mergedNodesById
     };
 
-    const mergedLinksById = graph.links.reduce((result, link) => ({
+    const mergedLinksById = graph.relationships.reduce((result, link) => ({
       ...result,
-      [link.linkId]: link
+      [link.id]: { ...link, value: link.witness.length }
     }), {})
 
     const newLinksById = {
@@ -36,23 +36,23 @@ export default (previousState = defaultState, { type, payload }) => {
       newLoadedPosition[i] = true;
     }
 
-    const newNodesAtPosition = graph.nodes.reduce((result, node) => ({
+    const newNodesAtPosition = graph.readings.reduce((result, node) => ({
       ...result,
-      [node.pos]: {
-        ...(result[node.pos] || {}),
-        [node.nodeId]: true
+      [node.rank]: {
+        ...(result[node.rank] || {}),
+        [node.id]: true
       }
     }), previousState.nodesAtPosition)
 
-    const newNodesAtPositionByWitness = graph.links.reduce((result, link) => {
+    const newNodesAtPositionByWitness = graph.relationships.reduce((result, link) => {
       const nodeSource = newNodesById[link.source];
       const nodeTarget = newNodesById[link.target];
 
       const newNodesAtPosition = {
-        [nodeTarget.pos]: nodeTarget.nodeId,
-        [nodeSource.pos]: nodeSource.nodeId
+        [nodeTarget.rank]: nodeTarget.id,
+        [nodeSource.rank]: nodeSource.id
       }
-      return link.witnesses.reduce((wResult, witness) => ({
+      return link.witness.reduce((wResult, witness) => ({
         ...wResult,
         [witness]: {
           ...(wResult[witness] || {}),
@@ -61,15 +61,15 @@ export default (previousState = defaultState, { type, payload }) => {
       }), result)
     }, previousState.nodesAtPositionByWitness)
 
-    const newLinksByNodes = graph.links.reduce((result, link) => ({
+    const newLinksByNodes = graph.relationships.reduce((result, link) => ({
       ...result,
       [link.target]: {
         ...result[link.target],
-        [link.linkId]: true
+        [link.id]: true
       },
       [link.source]: {
         ...result[link.source],
-        [link.linkId]: true
+        [link.id]: true
       }
     }), previousState.linksByNodes);
 

@@ -42,7 +42,7 @@ export const getTextNodesByWitness = createSelector(
       .filter(nodeId => !isUndefined(nodeId))
       .map(nodeId => {
         const node = nodesById[nodeId];
-        const pos = Number(node.pos);
+        const pos = Number(node.rank);
         return { ...node, pos, viewed: (pos >= start && pos <= end) };
       })
   )
@@ -62,7 +62,7 @@ export const getSankeyLinks = createSelector(
   getSankeyNodes,
   getLinksByNodes,
   (linksById, nodes, linksByNodes) => nodes.reduce((result, node) => {
-    const links = Object.keys(linksByNodes[node.nodeId]);
+    const links = Object.keys(linksByNodes[node.id]);
     return [...result, ...links.filter(linkId => !includes(result, linkId))];
   }, [])
   .map(linkId => linksById[linkId])
