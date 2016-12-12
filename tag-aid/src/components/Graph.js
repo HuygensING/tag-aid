@@ -23,10 +23,11 @@ export default class Graph extends Component {
 
 
     const graphDrag = function(d, evt) {
-      const dx = Number(d3.select(this).attr('dx') || 0) + Math.abs(d3.event.dx)
+      const dx = Number(d3.select(this).attr('dx') || 0) - d3.event.dx
       d3.select(this).attr('dx', dx)
-      if (dx > 10) {
-        setViewedPosition(viewedPosition.start + 1, viewedPosition.end + 1)
+      if (Math.abs(dx) > 5) {
+        let delta = parseInt(dx / 5);
+        setViewedPosition(viewedPosition.start + delta, viewedPosition.end + delta)
       }
       //.attr("transform","translate(" + d3.event.x + ", 0)");
     }
@@ -38,10 +39,11 @@ export default class Graph extends Component {
     }
 
     // append the svg sankey
-    const svg = d3.select(this.svg).html('')
+    const svg = d3.select(this.svg)
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-      .append("g")
+
+    const topG = d3.select(this.topG)
       .call(d3.drag().on("drag", graphDrag).on("end", graphDragEnd))
         .attr("transform",
               "translate(" + margin.left + "," + margin.top + ")");
@@ -106,8 +108,12 @@ export default class Graph extends Component {
 
 
   // add in the links
-    var link = svg.append("g").selectAll(".link")
-        .data(links)
+    var link = d3.select(this.linkGroup).selectAll(".link")
+        .data(links, l=>l.id).attr("d", path)
+
+      link.exit().remove();
+
+      link
         .enter().append("path")
         .attr("class", "link")
         .attr("d", path)
@@ -119,7 +125,12 @@ export default class Graph extends Component {
           return '#f0f0f0';
         })
         // .style("stroke-width", 5)
+        .sort(function(a, b) { return b.dy - a.dy; })
+
+      .merge(link)
+        .attr("d", path)
         .sort(function(a, b) { return b.dy - a.dy; });
+
   //
   // // add the link titles
     // link.append("title")
@@ -128,8 +139,14 @@ export default class Graph extends Component {
     //               d.target.name + "\n" + format(d.value); });
   //
   // add in the nodes
-    var node = svg.append("g").selectAll(".node")
-        .data(nodes)
+    var node = d3.select(this.nodeGroup).selectAll(".node")
+        .data(nodes, d => d.id)
+        .attr("transform", function(d) {
+  		  return "translate(" + d.x + "," + d.y + ")"; })
+
+    node.exit().remove();
+
+    let enter = node
       .enter().append("g")
         .attr("class", "node")
         .attr("transform", function(d) {
@@ -138,10 +155,10 @@ export default class Graph extends Component {
         // .origin(function(d) { return d; })
         .on("start", function() {
   		  this.parentNode.appendChild(this); })
-        .on("drag", dragmove));
-  //
-  // // add the rectangles for the nodes
-    node.append("rect")
+        .on("drag", dragmove))
+
+    // add the rectangles for the nodes
+    enter.append("rect")
         .attr("height", function(d) { return Math.abs(d.dy); })
         .attr("width", 2)
         .style("fill", "#ddd")
@@ -150,9 +167,8 @@ export default class Graph extends Component {
         .text(d => {
           return d.text
         })
-  //
-  // // add circles on top of the rectangles
-    node.append("circle")
+    // add circles on top of the rectangles
+    enter.append("circle")
         .attr("cx", function(d) { return d.dx-1; })
         .attr("cy", 0)
         .attr("r", 3)
@@ -162,10 +178,10 @@ export default class Graph extends Component {
   	      	} else {
   	      		return "#aaa";
   	      	}
-        	});
-  //
-  // // add in the title for the nodes
-    node.append("text")
+        	})
+
+    // add in the title for the nodes
+    enter.append("text")
         .attr("class", "word")
         .attr("x", 0)
         .attr("y", function(d) { return -11; })
@@ -173,6 +189,14 @@ export default class Graph extends Component {
         .attr("text-anchor", "middle")
         .attr("transform", null)
         .text(function(d) { return d.text; });
+
+    enter
+      .merge(node)
+        .attr("transform", function(d) {
+          return "translate(" + d.x + "," + d.y + ")"; })
+
+
+
   //
   // // the function for moving the nodes
     function dragmove(d) {
@@ -189,7 +213,12 @@ export default class Graph extends Component {
   render() {
     return (
       <div>
-        <svg ref={(svg) => { this.svg = svg }}></svg>
+        <svg ref={(svg) => { this.svg = svg }}>
+          <g ref={(topG) => { this.topG = topG }}>
+            <g ref={(linkGroup) => { this.linkGroup = linkGroup }}></g>
+            <g ref={(nodeGroup) => { this.nodeGroup = nodeGroup }}></g>
+          </g>
+        </svg>
       </div>
     );
   }

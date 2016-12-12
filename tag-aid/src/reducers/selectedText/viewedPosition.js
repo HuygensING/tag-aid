@@ -7,7 +7,11 @@ const defaultState = {
 export default (previousState = defaultState, { type, payload }) => {
   switch (type) {
     case SET_VIEWED_POSITION:
-      return payload;
+      return {
+        ...payload,
+        start: payload.start >= 0 ? payload.start : 0,
+        end: payload.end >= 20 ? payload.end : 20
+      };
     default:
       return previousState;
   }
