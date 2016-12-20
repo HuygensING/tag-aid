@@ -25,8 +25,8 @@ export default class Graph extends Component {
     const graphDrag = function(d, evt) {
       const dx = Number(d3.select(this).attr('dx') || 0) - d3.event.dx
       d3.select(this).attr('dx', dx)
-      if (Math.abs(dx) > 5) {
-        let delta = parseInt(dx / 5);
+      if (Math.abs(dx) > 20) {
+        let delta = parseInt(dx / 20);
         setViewedPosition(viewedPosition.start + delta, viewedPosition.end + delta)
       }
       //.attr("transform","translate(" + d3.event.x + ", 0)");
@@ -42,9 +42,9 @@ export default class Graph extends Component {
     const svg = d3.select(this.svg)
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
+        .call(d3.drag().on("drag", graphDrag).on("end", graphDragEnd))
 
     const topG = d3.select(this.topG)
-      .call(d3.drag().on("drag", graphDrag).on("end", graphDragEnd))
         .attr("transform",
               "translate(" + margin.left + "," + margin.top + ")");
         //
