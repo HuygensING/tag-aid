@@ -1,4 +1,4 @@
-import { takeEvery } from 'redux-saga';
+import { takeEvery, takeLatest } from 'redux-saga';
 import { put, call, select } from 'redux-saga/effects';
 import { max } from 'lodash'
 import {
@@ -7,9 +7,14 @@ import {
   GET_GRAPH_FAILURE,
   GET_GRAPH_SUCCESS,
   SET_VIEWED_POSITION,
-  getGraph as getGraphAction
+  SEARCH_TEXT,
+  SEARCH_TEXT_LOADING,
+  SEARCH_TEXT_FAILURE,
+  SEARCH_TEXT_SUCCESS,
+  getGraph as getGraphAction,
+  searchText as searchTextAction,
 } from '../actions';
-import { getGraph } from '../api'
+import { getGraph, searchText } from '../api'
 
 function *handleGetGraph({ payload: { start, end } }) {
 
@@ -34,7 +39,20 @@ function *handleSetViewedPosition({ payload: { start, end } }) {
   }
 }
 
+function *handleSearchText({payload}) {
+
+  yield put({ type: SEARCH_TEXT_LOADING });
+  try {
+    const results = yield call(searchText, payload)
+    yield put({ type: SEARCH_TEXT_SUCCESS, payload: results})
+  } catch (error) {
+    yield put({ type: SEARCH_TEXT_FAILURE, error });
+  }
+}
+
+
 export default function *tagAidSaga() {
   yield takeEvery(GET_GRAPH, handleGetGraph);
   yield takeEvery(SET_VIEWED_POSITION, handleSetViewedPosition);
+  yield takeLatest(SEARCH_TEXT, handleSearchText);
 }

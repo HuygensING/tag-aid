@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { setSelectedText, toggleWitness, getGraph, setViewedPosition } from '../actions';
-import { getWitnessesCheck, getSelectedWitnesses, getTextNodesByWitness, getSankeyNodes, getSankeyLinks } from '../selectors'
+import { setSelectedText, toggleWitness, getGraph, setViewedPosition, searchText } from '../actions';
+import { getWitnessesCheck, getSelectedWitnesses, getTextNodesByWitness, getSankeyNodes, getSankeyLinks, getTextSearchResults } from '../selectors'
 import WitnessText from '../components/WitnessText';
 import Graph from '../components/Graph';
 import { Grid, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
@@ -11,6 +11,14 @@ import '../styles/hi-faceted-search.css';
 const WITNESSES = [{"sigil":"Kr299"},{"sigil":"MuU151"},{"sigil":"Mu11475"},{"sigil":"Kf133"},{"sigil":"Gr314"},{"sigil":"Go325"},{"sigil":"An74"},{"sigil":"Er16"},{"sigil":"Kr185"},{"sigil":"Mu22405"},{"sigil":"Au318"},{"sigil":"Wi3818"},{"sigil":"Mu28315"},{"sigil":"Ba96"},{"sigil":"Sg524"}]
 
 class Text extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      searchToken : '',
+      searchedCurrentToken : false
+    }
+  }
   componentWillMount() {
     this.props.setSelectedText({
       title: 'Parzival',
@@ -18,6 +26,11 @@ class Text extends Component {
     })
     this.props.setViewedPosition(0, 20);
     // this.props.getGraph(0, 400);
+  }
+
+  handleSearch = () => {
+    this.setState({ searchedCurrentToken:true });
+    this.props.searchText(this.state.searchToken);
   }
 
   render() {
@@ -33,6 +46,10 @@ class Text extends Component {
       linksByWitness,
       allNodes,
       allLinks,
+      searchText,
+      searching,
+      results,
+      searchTextResults
     } = this.props;
     return (
       <Grid>
@@ -53,13 +70,29 @@ class Text extends Component {
                 {/* SEARCH */}
                 <div className="facet">
                   <InputGroup>
-                    <FormControl type="text" className="form-control search" placeholder="Search token" />
+                    <FormControl type="text" className="form-control search"
+                      placeholder="Search token"
+                      onChange={(e) =>  this.setState({searchToken:e.target.value, searchedCurrentToken:false})  } />
                       <span className="input-group-btn">
-                        <Button bsClass="btn btn-default">
+                        <Button bsClass="btn btn-default" onClick={()=> this.handleSearch() }>
                           <span className="glyphicon glyphicon-search"></span>
                         </Button>
                       </span>
                   </InputGroup>
+
+
+                  <div style={{padding:'10px'}}>
+                  { searching && <div>Searching ...</div>}
+                  { !searching && this.state.searchedCurrentToken && !results.length && <div>No results for search: <b>{this.state.searchToken}</b></div>}
+                  { Object.keys(searchTextResults).map(rank => (
+
+                    <div key={rank}>
+                      posizione: <a onClick={()=>setViewedPosition(+rank, +rank+20)}>{rank} ({searchTextResults[rank].length})</a>
+                    </div>
+                  )
+                  ) }
+                  </div>
+
                 </div>
 
                 {/* WITNESS SELECTION */}
@@ -133,12 +166,14 @@ const emptyList = []
 function mapStateToProps(state) {
 
   const { text, viewedPosition } = state.selectedText
+  const { searching, results } = state.selectedText.search;
   const witnessesCheck = getWitnessesCheck(state)
   const selectedWitnesses = getSelectedWitnesses(state)
   const nodesByWitness = getTextNodesByWitness(state)
   const allNodes = getSankeyNodes(state)
   const allLinks = getSankeyLinks(state)
-  console.log(nodesByWitness)
+  const searchTextResults = getTextSearchResults(state)
+  //console.log(nodesByWitness)
   // console.log(allNodes)
   // console.info(nodesByWitness)
   // const nodesByWitness = {}
@@ -197,6 +232,9 @@ function mapStateToProps(state) {
     nodesByWitness,
     allNodes,
     allLinks,
+    searching,
+    results,
+    searchTextResults,
   }
 }
 
@@ -204,5 +242,6 @@ export default connect(mapStateToProps, {
   setSelectedText,
   toggleWitness,
   getGraph,
-  setViewedPosition
+  setViewedPosition,
+  searchText,
 })(Text)

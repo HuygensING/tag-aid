@@ -1,8 +1,9 @@
 import { createSelector } from 'reselect';
-import { mapValues, range, isUndefined, includes } from 'lodash';
+import { mapValues, range, isUndefined, includes, groupBy } from 'lodash';
 
 const getAllWitnesses = state => state.selectedText.text.witnesses || [];
 const getWitnessesFilters = state => state.selectedText.filters.witnesses;
+const getRawTextSearchResults = state => state.selectedText.search.results;
 
 // For Checkboxes
 export const getWitnessesCheck = createSelector(
@@ -67,3 +68,10 @@ export const getSankeyLinks = createSelector(
   }, [])
   .map(linkId => linksById[linkId])
 )
+
+
+// For Checkboxes
+export const getTextSearchResults = createSelector(
+  getRawTextSearchResults,
+  (results) => groupBy(results, 'rank')
+);

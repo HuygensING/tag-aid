@@ -30,3 +30,13 @@ export const getGraph = (start, end) => ({
   type: GET_GRAPH,
   payload: { start, end }
 });
+
+
+export const SEARCH_TEXT = 'SEARCH_TEXT';
+export const SEARCH_TEXT_LOADING = 'SEARCH_TEXT_LOADING';
+export const SEARCH_TEXT_FAILURE = 'SEARCH_TEXT_FAILURE';
+export const SEARCH_TEXT_SUCCESS = 'SEARCH_TEXT_SUCCESS';
+export const searchText = (text) => ({
+  type: SEARCH_TEXT,
+  payload: text
+});

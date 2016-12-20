@@ -6,5 +6,6 @@ import selectedTextReducer from './selectedText';
 export default combineReducers({
   routing: routerReducer,
   indexTexts: indexTextsReducer,
-  selectedText: selectedTextReducer
+  selectedText: selectedTextReducer,
+  
 });

@@ -23,3 +23,7 @@ export const getGraph = (start, end) =>
       return swappedLink
     })
   }))
+
+export const searchText = (text) =>
+  fetchJson(`/stemmarest/tradition/${TEXT_ID}/search/${text}`)
+  .then(({ json }) => json)
