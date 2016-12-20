@@ -1,6 +1,6 @@
 import { fetchJson } from '../util/fetch';
 
-const API_URL = 'http://tag-aid.huygens.knaw.nl'
+const API_URL = 'https://tag-aid.huygens.knaw.nl'
 const TEXT_ID = 'aeb7d4b8-15af-4cb5-8c87-fa38661943a0'
 
 // export const getGraph = (start, end) =>
