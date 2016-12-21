@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 import witnessesReducer from './witnesses';
+import slidersReducer from './sliders';
 
 export default combineReducers({
-  witnesses: witnessesReducer
+  witnesses: witnessesReducer,
+  sliders: slidersReducer,
 });

@@ -10,5 +10,5 @@ export default combineReducers({
   filters: filtersReducer, // gestione filtri viz  per witness
   viewedPosition: viewedPositionReducer, // gestisce la porzione di testo visualizzata
   graph: graphReducer, // gestisce la struttura dati del grafo,
-  search: searchReducer,
+  search: searchReducer, // gestisce la ricerca di un token
 });

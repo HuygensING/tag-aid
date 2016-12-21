@@ -1,11 +1,30 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { setSelectedText, toggleWitness, getGraph, setViewedPosition, searchText } from '../actions';
-import { getWitnessesCheck, getSelectedWitnesses, getTextNodesByWitness, getSankeyNodes, getSankeyLinks, getTextSearchResults } from '../selectors'
+import {
+  setSelectedText,
+  toggleWitness,
+  getGraph,
+  setViewedPosition,
+  searchText,
+  setNodeWidth,
+  setNodeHeight,
+  setEdgeOpacity,
+  setNodeOpacity,
+} from '../actions';
+import {
+  getWitnessesCheck,
+  getSelectedWitnesses,
+  getTextNodesByWitness,
+  getSankeyNodes,
+  getSankeyLinks,
+  getTextSearchResults,
+} from '../selectors'
 import WitnessText from '../components/WitnessText';
 import Graph from '../components/Graph';
 import { Grid, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
+import Slider from 'rc-slider'
+import 'rc-slider/assets/index.css'
 import '../styles/hi-faceted-search.css';
 
 const WITNESSES = [{"sigil":"Kr299"},{"sigil":"MuU151"},{"sigil":"Mu11475"},{"sigil":"Kf133"},{"sigil":"Gr314"},{"sigil":"Go325"},{"sigil":"An74"},{"sigil":"Er16"},{"sigil":"Kr185"},{"sigil":"Mu22405"},{"sigil":"Au318"},{"sigil":"Wi3818"},{"sigil":"Mu28315"},{"sigil":"Ba96"},{"sigil":"Sg524"}]
@@ -49,7 +68,12 @@ class Text extends Component {
       searchText,
       searching,
       results,
-      searchTextResults
+      searchTextResults,
+      sliders,
+      setNodeWidth,
+      setNodeHeight,
+      setNodeOpacity,
+      setEdgeOpacity,
     } = this.props;
     return (
       <Grid>
@@ -127,6 +151,26 @@ class Text extends Component {
                       </div>
                     </div>
                   </div>
+
+                  <p>
+                      <p>
+                        <div>Node Height <b>{sliders.nodeHeight}</b></div>
+                        <Slider value={sliders.nodeHeight} tipFormatter={null} onChange={setNodeHeight} />
+                      </p>
+                      <p>
+                        <div>Node Width <b>{sliders.nodeWidth}</b></div>
+                        <Slider value={sliders.nodeWidth} tipFormatter={null} onChange={setNodeWidth} />
+                      </p>
+                      <p>
+                        <div>Edge Opacity <b>{sliders.edgeOpacity}</b></div>
+                        <Slider value={sliders.edgeOpacity} tipFormatter={null} onChange={setEdgeOpacity}/>
+                      </p>
+                      <p>
+                        <div>Node Opacity <b>{sliders.nodeOpacity}</b></div>
+                        <Slider value={sliders.nodeOpacity} tipFormatter={null} onChange={setNodeOpacity} />
+                      </p>
+                  </p>
+
                 </div>
               </Col>
               {/* MAIN AREA */}
@@ -162,68 +206,17 @@ class Text extends Component {
   }
 }
 
-const emptyList = []
 function mapStateToProps(state) {
-
   const { text, viewedPosition } = state.selectedText
   const { searching, results } = state.selectedText.search;
+  const sliders = state.selectedText.filters.sliders;
   const witnessesCheck = getWitnessesCheck(state)
   const selectedWitnesses = getSelectedWitnesses(state)
   const nodesByWitness = getTextNodesByWitness(state)
   const allNodes = getSankeyNodes(state)
   const allLinks = getSankeyLinks(state)
   const searchTextResults = getTextSearchResults(state)
-  //console.log(nodesByWitness)
-  // console.log(allNodes)
-  // console.info(nodesByWitness)
-  // const nodesByWitness = {}
-  // const nodesAtPositionByWitness = state.selectedText.graph.nodesAtPositionByWitness
-  //
-  // const witnessesKeys = Object.keys(nodesAtPositionByWitness)
-  // for (let i = 0; i < witnessesKeys.length; i++) {
-  //   const key = witnessesKeys[i];
-  //   const positions = Object.keys(nodesAtPositionByWitness[key]).map(pos => Number(pos)).sort((a, b) => a - b)
-  //   nodesByWitness[key] = positions.map(pos => {
-  //     const nodeId = nodesAtPositionByWitness[key][pos]
-  //     return state.selectedText.graph.nodesById[nodeId]
-  //   })
-  // }
 
-  // const linksByWitness = {};
-  // const linksByNodes = state.selectedText.graph.linksByNodes;
-  //
-  // for (let i = 0; i < witnessesKeys.length; i++) {
-  //   const key = witnessesKeys[i];
-  //
-  //   const positions = Object.keys(nodesAtPositionByWitness[key]).map(pos => Number(pos)).sort((a, b) => a - b)
-  //   linksByWitness[key] = positions.map(pos => {
-  //     const nodeId = nodesAtPositionByWitness[key][pos]
-  //     return Object.keys(linksByNodes[nodeId])
-  //   })
-  //   .reduce((result, links) => [...result, ...links], [])
-  //   .map(linkId => state.selectedText.graph.linksById[linkId])
-  // }
-
-  // console.log(Object.keys(nodesAtPositionByWitness))
-  // const allNodes = Object.keys(nodesAtPositionByWitness).reduce((result, witness) => {
-  //   return [...result, ...Object.values(nodesAtPositionByWitness[witness]).filter(id => result.indexOf(id) === -1)]
-  // }, []).map(id => state.selectedText.graph.nodesById[id])
-  // // const allNodes = getSankeyNodes(state)
-  // // console.log({ allNodes2, allNodes })
-  // //
-  // const allLinks = allNodes.reduce((result, node) => {
-  //   return [...result, ...Object.keys(linksByNodes[node.nodeId]).filter(id => result.indexOf(id) === -1)]
-  // }, []).map(linkId => state.selectedText.graph.linksById[linkId])
-  // console.log(allLinks)
-  // console.log(allNodes)
-
-
-  // const nodes = Object.values(state.selectedText.graph.nodesById);
-
-  // const nodes = state.selectedText.graph.nodesAtPositionByWitness.reduce((result, nodesAtPosition, key) => ({
-  //   ...result,
-  //   [key]: Object.keys(nodesAtPosition).map()
-  // }))
   return {
     text,
     viewedPosition,
@@ -235,6 +228,7 @@ function mapStateToProps(state) {
     searching,
     results,
     searchTextResults,
+    sliders,
   }
 }
 
@@ -244,4 +238,8 @@ export default connect(mapStateToProps, {
   getGraph,
   setViewedPosition,
   searchText,
+  setNodeWidth,
+  setNodeHeight,
+  setNodeOpacity,
+  setEdgeOpacity,
 })(Text)

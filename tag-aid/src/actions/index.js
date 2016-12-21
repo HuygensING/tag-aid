@@ -16,6 +16,17 @@ export const toggleWitness = (witness) => ({
   payload: witness
 });
 
+export const SET_SLIDER_VALUE = 'SET_SLIDER_VALUE';
+const makeSliderAction = (slider) => (value) => ({
+  type: SET_SLIDER_VALUE,
+  payload: { value, slider }
+})
+// Different sliders
+export const setNodeHeight = makeSliderAction('nodeHeight')
+export const setNodeWidth = makeSliderAction('nodeWidth')
+export const setNodeOpacity = makeSliderAction('nodeOpacity')
+export const setEdgeOpacity = makeSliderAction('edgeOpacity')
+
 export const SET_VIEWED_POSITION = 'SET_VIEWED_POSITION';
 export const setViewedPosition = (start, end) => ({
   type: SET_VIEWED_POSITION,
