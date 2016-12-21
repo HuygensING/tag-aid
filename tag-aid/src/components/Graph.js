@@ -84,7 +84,7 @@ export default class Graph extends Component {
         .size([width * 2, height])
         .layout(150);
 
-  const path = sankeyLayout.link();
+  let path = sankeyLayout.link();
   const colors = ["#F34336",
                   "#E81E63",
                   "#9B27AF",
@@ -107,7 +107,7 @@ export default class Graph extends Component {
 
 
 
-  // add in the links
+    // add in the links
     var link = d3.select(this.linkGroup).selectAll(".link")
         .data(links, l=>l.id).attr("d", path)
 
@@ -115,7 +115,7 @@ export default class Graph extends Component {
 
       link
         .enter().append("path")
-        .attr("class", "link")
+        .attr("class", (d)=>{console.log(d); return `link with-source-${d.source.id} with-target-${d.target.id}`;})
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
         .style("stroke",(d) => {
@@ -159,7 +159,10 @@ export default class Graph extends Component {
 
     // add the rectangles for the nodes
     enter.append("rect")
-        .attr("height", function(d) { return Math.abs(d.dy); })
+        .attr("height", function(d) {
+          return d.value;
+          //return Math.abs(d.dy); 
+        })
         .attr("width", 2)
         .style("fill", "#ddd")
         .style("opacity", 1)
@@ -197,15 +200,19 @@ export default class Graph extends Component {
 
 
 
+
   //
   // // the function for moving the nodes
+    const linkGroup = this.linkGroup;
     function dragmove(d) {
       d3.select(this).attr("transform",
           "translate(" + d.x + "," + (
                   d.y = Math.max(0, Math.min(height - d.dy, d3.event.y))
               ) + ")");
       sankeyLayout.relayout();
-      link.attr("d", path);
+      const newPath = sankeyLayout.link();
+      d3.select(linkGroup).selectAll(".link")
+          .attr("d", newPath)
     }
 
   }
