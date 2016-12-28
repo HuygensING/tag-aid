@@ -120,7 +120,8 @@ export default class Graph extends Component {
 
       link
         .enter().append("path")
-        .attr("class", (d)=>{console.log(d); return `link with-source-${d.source.id} with-target-${d.target.id}`;})
+        .attr("class", (d)=>{ return `link with-source-${d.source.id} with-target-${d.target.id}`;})
+        .attr('opacity', this.props.edgeOpacity)
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
         .style("stroke",(d) => {
@@ -181,6 +182,7 @@ export default class Graph extends Component {
         .attr("cy", 0)
         .attr("r", 10)
         .attr("class", "circle-shape")
+        .attr('opacity', this.props.nodeOpacity)
         .style("fill", function(d){
   	      	if (d.majority === "true") {
   	      		return "red";
@@ -222,9 +224,10 @@ export default class Graph extends Component {
   }
 
   attachEventHandlers(){
-    const { setViewedPosition, viewedPosition } = this.props;
 
+    const that = this;
     const graphDrag = function(d, evt) {
+      const { setViewedPosition, viewedPosition } = that.props;
       const dx = Number(d3.select(this).attr('dx') || 0) - d3.event.dx
       d3.select(this).attr('dx', dx)
       if (Math.abs(dx) > 20) {
