@@ -27,6 +27,18 @@ export const setNodeWidth = makeSliderAction('nodeWidth')
 export const setNodeOpacity = makeSliderAction('nodeOpacity')
 export const setEdgeOpacity = makeSliderAction('edgeOpacity')
 
+
+export const SET_TOGGLE = 'SET_TOGGLE';
+const makeToggleAction = (toggle) => () => ({
+  type: SET_TOGGLE,
+  payload:toggle
+})
+export const toggleShowRuler = makeToggleAction('showRuler')
+export const toogleShowVarationsMarks = makeToggleAction('showVarationsMarks')
+export const toggleShowNodes = makeToggleAction('showNodes')
+export const toggleShowEdges = makeToggleAction('showEdges')
+
+
 export const SET_VIEWED_POSITION = 'SET_VIEWED_POSITION';
 export const setViewedPosition = (start, end) => ({
   type: SET_VIEWED_POSITION,

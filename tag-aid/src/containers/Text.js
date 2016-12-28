@@ -11,6 +11,10 @@ import {
   setNodeHeight,
   setEdgeOpacity,
   setNodeOpacity,
+  toggleShowRuler,
+  toggleShowVarationsMarks,
+  toggleShowNodes,
+  toggleShowEdges
 } from '../actions';
 import {
   getWitnessesCheck,
@@ -70,10 +74,15 @@ class Text extends Component {
       results,
       searchTextResults,
       sliders,
+      toggles,
       setNodeWidth,
       setNodeHeight,
       setNodeOpacity,
       setEdgeOpacity,
+      toggleShowRuler,
+      toggleShowVarationsMarks,
+      toggleShowNodes,
+      toggleShowEdges,
     } = this.props;
     return (
       <Grid>
@@ -152,24 +161,65 @@ class Text extends Component {
                     </div>
                   </div>
 
-                  <p>
-                      <p>
+                  <div className="sliders-container">
+                      <div>
                         <div>Node Height <b>{sliders.nodeHeight}</b></div>
                         <Slider value={sliders.nodeHeight} tipFormatter={null} onChange={setNodeHeight} />
-                      </p>
-                      <p>
+                      </div>
+                      <div>
                         <div>Node Width <b>{sliders.nodeWidth}</b></div>
                         <Slider value={sliders.nodeWidth} tipFormatter={null} onChange={setNodeWidth} min={0} max={20} />
-                      </p>
-                      <p>
+                      </div>
+                      <div>
                         <div>Edge Opacity <b>{sliders.edgeOpacity}</b></div>
                         <Slider value={sliders.edgeOpacity} tipFormatter={null} onChange={setEdgeOpacity} step={0.05} min={0.0} max={1.0} />
-                      </p>
-                      <p>
+                      </div>
+                      <div>
                         <div>Node Opacity <b>{sliders.nodeOpacity}</b></div>
                         <Slider value={sliders.nodeOpacity} tipFormatter={null} onChange={setNodeOpacity} step={0.05} min={0.0} max={1.0} />
-                      </p>
-                  </p>
+                      </div>
+                  </div>
+
+                  <div className="toggles-container">
+                    <div>
+                      <input
+                        onChange={() => toggleShowRuler()}
+                        type="checkbox"
+                        checked={toggles.showRuler}
+                        name='showRuler'
+                      />
+                      <label htmlFor='showRuler'>Show ruler</label>
+                    </div>
+                    <div>
+                      <input
+                        onChange={() => toggleShowVarationsMarks()}
+                        type="checkbox"
+                        checked={toggles.showVarationsMarks}
+                        name='showVarationsMarks'
+                      />
+                      <label htmlFor='showVarationsMarks'>Show variations marks</label>
+                    </div>
+                    <div>
+                      <input
+                        onChange={() => toggleShowNodes()}
+                        type="checkbox"
+                        checked={toggles.showNodes}
+                        name='showNodes'
+                      />
+                      <label htmlFor='showNodes'>Show nodes</label>
+                    </div>
+                    <div>
+                      <input
+                        onChange={() => toggleShowEdges()}
+                        type="checkbox"
+                        checked={toggles.showEdges}
+                        name='showEdges'
+                      />
+                      <label htmlFor='showRuler'>Show edges</label>
+                    </div>
+
+
+                  </div>
 
                 </div>
               </Col>
@@ -183,6 +233,9 @@ class Text extends Component {
                     <Graph key={witness}
                       nodeOpacity={sliders.nodeOpacity} nodeWidth={sliders.nodeWidth}
                       edgeOpacity={sliders.edgeOpacity}
+                      showNodes={toggles.showNodes} showEdges={toggles.showEdges}
+                      showVarationsMarks={toggles.showVarationsMarks}
+
                       viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
                   ))}
                 </div>
@@ -213,6 +266,7 @@ function mapStateToProps(state) {
   const { text, viewedPosition } = state.selectedText
   const { searching, results } = state.selectedText.search;
   const sliders = state.selectedText.filters.sliders;
+  const toggles = state.selectedText.filters.toggles;
   const witnessesCheck = getWitnessesCheck(state)
   const selectedWitnesses = getSelectedWitnesses(state)
   const nodesByWitness = getTextNodesByWitness(state)
@@ -232,6 +286,7 @@ function mapStateToProps(state) {
     results,
     searchTextResults,
     sliders,
+    toggles,
   }
 }
 
@@ -245,4 +300,8 @@ export default connect(mapStateToProps, {
   setNodeHeight,
   setNodeOpacity,
   setEdgeOpacity,
+  toggleShowRuler,
+  toggleShowVarationsMarks,
+  toggleShowNodes,
+  toggleShowEdges,
 })(Text)

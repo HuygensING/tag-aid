@@ -15,6 +15,8 @@ export default class Graph extends Component {
     this.updateNodeOpacity(this.props.nodeOpacity);
     this.updateNodeWidth(this.props.nodeWidth);
     this.updateEdgeOpacity(this.props.edgeOpacity);
+    this.updateNodeVisibility(this.props.showNodes);
+    this.updateEdgeVisibility(this.props.showEdges);
   }
 
   shouldComponentUpdate(){
@@ -36,6 +38,14 @@ export default class Graph extends Component {
 
     if((nextProps.nodeWidth !== this.props.nodeWidth)){
       this.updateNodeWidth(nextProps.nodeWidth);
+    }
+
+    if((nextProps.showNodes !== this.props.showNodes)){
+      this.updateNodeVisibility(nextProps.showNodes);
+    }
+
+    if((nextProps.showEdges !== this.props.showEdges)){
+      this.updateEdgeVisibility(nextProps.showEdges);
     }
 
   }
@@ -123,6 +133,7 @@ export default class Graph extends Component {
         .enter().append("path")
         .attr("class", (d)=>{ return `link with-source-${d.source.id} with-target-${d.target.id}`;})
         .attr('opacity', this.props.edgeOpacity)
+        .style("visibility", this.props.showEdges ? "visible" : "hidden")
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
         .style("stroke",(d) => {
@@ -184,6 +195,7 @@ export default class Graph extends Component {
         .attr("cy", 0)
         .attr("r", this.props.nodeWidth / 2)
         .attr('opacity', this.props.nodeOpacity)
+        .style("visibility", this.props.showNodes ? "visible" : "hidden")
         .style("fill", function(d){
   	      	if (d.majority === "true") {
   	      		return "red";
@@ -251,6 +263,11 @@ export default class Graph extends Component {
       .style("opacity", this.props.nodeOpacity)
   }
 
+  updateNodeVisibility(visibility){
+    d3.selectAll('.circle-shape')
+      .style("visibility", visibility ? "visible" : "hidden")
+  }
+
   updateNodeWidth(width){
     d3.selectAll('.circle-shape')
       .attr("r", width / 2)
@@ -259,6 +276,11 @@ export default class Graph extends Component {
   updateEdgeOpacity(opacity){
     d3.selectAll('path.link')
       .style("opacity", this.props.edgeOpacity)
+  }
+
+  updateEdgeVisibility(visibility){
+    d3.selectAll('path.link')
+      .style("visibility", visibility ? "visible" : "hidden")
   }
 
 
