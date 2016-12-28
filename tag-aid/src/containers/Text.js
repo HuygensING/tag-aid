@@ -159,15 +159,15 @@ class Text extends Component {
                       </p>
                       <p>
                         <div>Node Width <b>{sliders.nodeWidth}</b></div>
-                        <Slider value={sliders.nodeWidth} tipFormatter={null} onChange={setNodeWidth} />
+                        <Slider value={sliders.nodeWidth} tipFormatter={null} onChange={setNodeWidth} min={2} max={10} />
                       </p>
                       <p>
                         <div>Edge Opacity <b>{sliders.edgeOpacity}</b></div>
-                        <Slider value={sliders.edgeOpacity} tipFormatter={null} onChange={setEdgeOpacity}/>
+                        <Slider value={sliders.edgeOpacity} tipFormatter={null} onChange={setEdgeOpacity} step={0.05} min={0.0} max={1.0} />
                       </p>
                       <p>
                         <div>Node Opacity <b>{sliders.nodeOpacity}</b></div>
-                        <Slider value={sliders.nodeOpacity} tipFormatter={null} onChange={setNodeOpacity} />
+                        <Slider value={sliders.nodeOpacity} tipFormatter={null} onChange={setNodeOpacity} step={0.05} min={0.0} max={1.0} />
                       </p>
                   </p>
 
@@ -180,7 +180,7 @@ class Text extends Component {
                 <button onClick={() => setViewedPosition(viewedPosition.start + 10, viewedPosition.end + 10)}>+10</button>
                 <div id="chart-area">
                   {selectedWitnesses.map(witness => (
-                    <Graph key={witness} viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
+                    <Graph key={witness} nodeOpacity={sliders.nodeOpacity} nodeWidth={sliders.nodeWidth} viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
                   ))}
                 </div>
                 {/* <img className="img-responsive" src="http://placehold.it/3000x1500?text=chart area"  alt="Placeholder"/> */}

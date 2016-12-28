@@ -13,7 +13,10 @@ export default class Graph extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if ((nextProps.nodes !== this.props.nodes) || (nextProps.links !== this.props.links)) {
+    if ((nextProps.nodes !== this.props.nodes) ||
+        (nextProps.links !== this.props.links) ||
+        (nextProps.nodeWidth !== this.props.nodeWidth) ||
+        (nextProps.nodeOpacity !== this.props.nodeOpacity)) {
       this.drawSankey(nextProps.nodes, nextProps.links);
     }
   }
@@ -171,7 +174,8 @@ export default class Graph extends Component {
     enter.append("circle")
         .attr("cx", function(d) { return d.dx-1; })
         .attr("cy", 0)
-        .attr("r", 3)
+        .attr("r", 10)
+        .attr("class", "circle-shape")
         .style("fill", function(d){
   	      	if (d.majority === "true") {
   	      		return "red";
@@ -195,7 +199,8 @@ export default class Graph extends Component {
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")"; })
 
-
+    d3.selectAll('.circle-shape')
+      .style("opacity", this.props.nodeOpacity)
 
   //
   // // the function for moving the nodes
