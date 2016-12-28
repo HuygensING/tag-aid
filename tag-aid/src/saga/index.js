@@ -1,4 +1,4 @@
-import { takeEvery, takeLatest } from 'redux-saga';
+import { takeEvery, takeLatest, delay } from 'redux-saga';
 import { put, call, select } from 'redux-saga/effects';
 import { max } from 'lodash'
 import {
@@ -18,6 +18,7 @@ import { getGraph, searchText } from '../api'
 
 function *handleGetGraph({ payload: { start, end } }) {
 
+  yield call(delay, 100);
   yield put({ type: GET_GRAPH_LOADING });
   try {
     const graph = yield call(getGraph, start, end)
@@ -52,7 +53,7 @@ function *handleSearchText({payload}) {
 
 
 export default function *tagAidSaga() {
-  yield takeEvery(GET_GRAPH, handleGetGraph);
+  yield takeLatest(GET_GRAPH, handleGetGraph);
   yield takeEvery(SET_VIEWED_POSITION, handleSetViewedPosition);
   yield takeLatest(SEARCH_TEXT, handleSearchText);
 }
