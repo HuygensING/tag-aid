@@ -90,7 +90,9 @@ export default class Graph extends Component {
     // FIXME: Do the right sort before
     .sort((a, b) => Number(a.source) - Number(b.source))
 
-    const nodes = [...allNodes]
+    const nodes = [...allNodes];
+
+    console.info("nodes and links", nodes.length, links.length)
 
     const sankeyLayout = sankey()
         .nodes(nodes)

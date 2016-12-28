@@ -9,7 +9,11 @@ const defaultState = {
   linksByNodes: {},
 };
 export default (previousState = defaultState, { type, payload }) => {
+
   if (type === GET_GRAPH_SUCCESS) {
+    console.time('GET_GRAPH_SUCCESS');
+    console.time('GET_GRAPH_SUCCESS_INNER');
+
     const { graph, start, end } = payload;
     const mergedNodesById = graph.readings.reduce((result, node) => ({
       ...result,
@@ -73,7 +77,10 @@ export default (previousState = defaultState, { type, payload }) => {
       }
     }), previousState.linksByNodes);
 
-    return {
+
+
+    console.timeEnd('GET_GRAPH_SUCCESS_INNER');
+    const out =  {
       nodesById: newNodesById,
       linksById: newLinksById,
       loadedPositions: {
@@ -84,6 +91,9 @@ export default (previousState = defaultState, { type, payload }) => {
       nodesAtPositionByWitness: newNodesAtPositionByWitness,
       linksByNodes: newLinksByNodes,
     }
+
+    console.timeEnd('GET_GRAPH_SUCCESS');
+    return out;
   }
   return previousState;
 }
