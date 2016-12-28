@@ -8,44 +8,46 @@ const margin = {top: 40, right: 50, bottom: 40, left: 20};
     const height = 200 - margin.top - margin.bottom;
 
 export default class Graph extends Component {
+
   componentDidMount() {
     this.drawSankey(this.props.nodes, this.props.links);
+    this.attachEventHandlers()
+    this.updateNodeOpacity(this.props.nodeOpacity);
+    this.updateEdgeOpacity(this.props.edgeOpacity);
+  }
+
+  shouldComponentUpdate(){
+    return false;
   }
 
   componentWillReceiveProps(nextProps) {
-    if ((nextProps.nodes !== this.props.nodes) ||
-        (nextProps.links !== this.props.links) ||
-        (nextProps.nodeWidth !== this.props.nodeWidth) ||
-        (nextProps.nodeOpacity !== this.props.nodeOpacity)) {
+    if ((nextProps.nodes !== this.props.nodes) || (nextProps.links !== this.props.links)) {
       this.drawSankey(nextProps.nodes, nextProps.links);
     }
+
+    if((nextProps.nodeOpacity !== this.props.nodeOpacity)){
+      this.updateNodeOpacity(nextProps.nodeOpacity);
+    }
+
+    if((nextProps.edgeOpacity !== this.props.edgeOpacity)){
+      this.updateEdgeOpacity(nextProps.edgeOpacity);
+    }
+
+    if((nextProps.nodeWidth !== this.props.nodeWidth)){
+
+    }
+
   }
+
 
   drawSankey(allNodes, allLinks) {
     const { setViewedPosition, viewedPosition } = this.props;
 
 
-    const graphDrag = function(d, evt) {
-      const dx = Number(d3.select(this).attr('dx') || 0) - d3.event.dx
-      d3.select(this).attr('dx', dx)
-      if (Math.abs(dx) > 20) {
-        let delta = parseInt(dx / 20);
-        setViewedPosition(viewedPosition.start + delta, viewedPosition.end + delta)
-      }
-      //.attr("transform","translate(" + d3.event.x + ", 0)");
-    }
-
-    const graphDragEnd = function(d, evt) {
-      // const movedPosition = Math.round(d3.select(this).attr('dx') / 45)
-      d3.select(this).attr('dx', 0)
-      // setViewedPosition(viewedPosition.start + movedPosition, viewedPosition.end + movedPosition)
-    }
-
     // append the svg sankey
     const svg = d3.select(this.svg)
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .call(d3.drag().on("drag", graphDrag).on("end", graphDragEnd))
 
     const topG = d3.select(this.topG)
         .attr("transform",
@@ -164,7 +166,7 @@ export default class Graph extends Component {
     enter.append("rect")
         .attr("height", function(d) {
           return d.value;
-          //return Math.abs(d.dy); 
+          //return Math.abs(d.dy);
         })
         .attr("width", 2)
         .style("fill", "#ddd")
@@ -202,9 +204,6 @@ export default class Graph extends Component {
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")"; })
 
-    d3.selectAll('.circle-shape')
-      .style("opacity", this.props.nodeOpacity)
-
 
   //
   // // the function for moving the nodes
@@ -221,6 +220,38 @@ export default class Graph extends Component {
     }
 
   }
+
+  attachEventHandlers(){
+    const { setViewedPosition, viewedPosition } = this.props;
+
+    const graphDrag = function(d, evt) {
+      const dx = Number(d3.select(this).attr('dx') || 0) - d3.event.dx
+      d3.select(this).attr('dx', dx)
+      if (Math.abs(dx) > 20) {
+        let delta = parseInt(dx / 20);
+        setViewedPosition(viewedPosition.start + delta, viewedPosition.end + delta)
+      }
+    }
+
+    const graphDragEnd = function(d, evt) {
+      d3.select(this).attr('dx', 0)
+    }
+
+    d3.select(this.svg)
+      .call(d3.drag().on("drag", graphDrag).on("end", graphDragEnd))
+
+  }
+
+  updateNodeOpacity(opacity){
+    d3.selectAll('.circle-shape')
+      .style("opacity", this.props.nodeOpacity)
+  }
+
+  updateEdgeOpacity(opacity){
+    d3.selectAll('path.link')
+      .style("opacity", this.props.edgeOpacity)
+  }
+
 
   render() {
     return (
