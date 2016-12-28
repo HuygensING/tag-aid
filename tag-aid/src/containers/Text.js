@@ -159,7 +159,7 @@ class Text extends Component {
                       </p>
                       <p>
                         <div>Node Width <b>{sliders.nodeWidth}</b></div>
-                        <Slider value={sliders.nodeWidth} tipFormatter={null} onChange={setNodeWidth} min={2} max={10} />
+                        <Slider value={sliders.nodeWidth} tipFormatter={null} onChange={setNodeWidth} min={0} max={20} />
                       </p>
                       <p>
                         <div>Edge Opacity <b>{sliders.edgeOpacity}</b></div>
@@ -182,7 +182,7 @@ class Text extends Component {
                   {selectedWitnesses.map(witness => (
                     <Graph key={witness}
                       nodeOpacity={sliders.nodeOpacity} nodeWidth={sliders.nodeWidth}
-                      edgeOpacity={sliders.edgeOpacity} 
+                      edgeOpacity={sliders.edgeOpacity}
                       viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
                   ))}
                 </div>

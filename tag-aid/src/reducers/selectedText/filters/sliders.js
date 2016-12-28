@@ -2,7 +2,7 @@ import { SET_SLIDER_VALUE } from '../../../actions'
 
 const defaultState = {
   nodeHeight: 20,
-  nodeWidth: 3,
+  nodeWidth: 10,
   nodeOpacity: 0.5,
   edgeOpacity: 1
 }

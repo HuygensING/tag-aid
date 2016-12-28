@@ -13,6 +13,7 @@ export default class Graph extends Component {
     this.drawSankey(this.props.nodes, this.props.links);
     this.attachEventHandlers()
     this.updateNodeOpacity(this.props.nodeOpacity);
+    this.updateNodeWidth(this.props.nodeWidth);
     this.updateEdgeOpacity(this.props.edgeOpacity);
   }
 
@@ -34,7 +35,7 @@ export default class Graph extends Component {
     }
 
     if((nextProps.nodeWidth !== this.props.nodeWidth)){
-
+      this.updateNodeWidth(nextProps.nodeWidth);
     }
 
   }
@@ -178,10 +179,10 @@ export default class Graph extends Component {
         })
     // add circles on top of the rectangles
     enter.append("circle")
+        .attr("class", "circle-shape")
         .attr("cx", function(d) { return d.dx-1; })
         .attr("cy", 0)
-        .attr("r", 10)
-        .attr("class", "circle-shape")
+        .attr("r", this.props.nodeWidth / 2)
         .attr('opacity', this.props.nodeOpacity)
         .style("fill", function(d){
   	      	if (d.majority === "true") {
@@ -248,6 +249,11 @@ export default class Graph extends Component {
   updateNodeOpacity(opacity){
     d3.selectAll('.circle-shape')
       .style("opacity", this.props.nodeOpacity)
+  }
+
+  updateNodeWidth(width){
+    d3.selectAll('.circle-shape')
+      .attr("r", width / 2)
   }
 
   updateEdgeOpacity(opacity){
