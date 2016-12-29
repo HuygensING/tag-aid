@@ -88,33 +88,38 @@ class Text extends Component {
           </Row>
           {/* MAIN ROW */}
           <Row>
-            <Col sm={3} md={2} id="left-pane">
+            <Col sm={3} md={3} id="left-pane">
               {/* LEFT PANE */}
               <div className="facet-group">
                 {/* SEARCH */}
                 <div className="facet">
                   <InputGroup>
                     <FormControl type="text" className="form-control search"
-                      placeholder="Search token"
+                      placeholder="Search word"
                       onChange={(e) =>  this.setState({searchToken:e.target.value, searchedCurrentToken:false})  } />
                       <span className="input-group-btn">
-                        <Button bsClass="btn btn-default" onClick={()=> this.handleSearch() }>
+                        <Button bsClass="btn btn-default btn-search btn-lg" onClick={()=> this.handleSearch() }>
                           <span className="glyphicon glyphicon-search"></span>
                         </Button>
                       </span>
                   </InputGroup>
 
-
-                  <div style={{padding:'10px'}}>
-                  { searching && <div>Searching ...</div>}
-                  { !searching && this.state.searchedCurrentToken && !results.length && <div>No results for search: <b>{this.state.searchToken}</b></div>}
-                  { Object.keys(searchTextResults).map(rank => (
-
-                    <div key={rank}>
-                      posizione: <a onClick={()=>setViewedPosition(+rank, +rank+20)}>{rank} ({searchTextResults[rank].length})</a>
-                    </div>
-                  )
-                  ) }
+                  <div>
+                    { searching && <div>Searching ...</div>}
+                    { !searching && this.state.searchedCurrentToken && !results.length && <div className="search-results">No results for word &ldquo;<b>{this.state.searchToken}</b>&rdquo;</div>}
+                    { !searching && this.state.searchedCurrentToken && results.length > 0 &&
+                      <div>
+                        <div className="search-results-header">Results for word &ldquo;<b>{this.state.searchToken}</b>&rdquo;</div>
+                        <ul className="search-results">
+                        { Object.keys(searchTextResults).map(rank => (
+                          <li key={rank}>
+                          pos: <a onClick={()=>setViewedPosition(+rank, +rank+20)}>{rank}</a> &mdash; {(searchTextResults[rank].length - 1 > 1) ? <span><strong>{searchTextResults[rank].length - 1}</strong> variants</span> : <span>no variants</span>}
+                          </li>
+                        )
+                        ) }
+                        </ul>
+                      </div>
+                    }
                   </div>
 
                 </div>
@@ -122,15 +127,16 @@ class Text extends Component {
                 {/* WITNESS SELECTION */}
                 <div className="facet basic-facet">
                   <h2>Witnesses</h2>
-                  <button className="btn btn-facet-collapse btn-facet-witnesses-collapse pull-right" data-toggle="collapse" data-target="#facet-witnesses">
-
-                  </button>
+                  <button className="btn btn-facet-collapse btn-facet-witnesses-collapse pull-right" data-toggle="collapse" data-target="#facet-witnesses" />
                   <div id="facet-witnesses" className="facet-items-box collapse in">
                     <div className="selectors">
-                      <div className="facet-item checkbox">
+
+                      <div className="facet-item">
+
                         {witnessesCheck.map(witness => (
-                          <div key={witness.value}>
+                          <div key={witness.value} className="checkbox checkbox-witness">
                             <input
+                              className="styled"
                               onChange={() => toggleWitness(witness.value)}
                               type="checkbox"
                               checked={witness.checked}
@@ -142,42 +148,35 @@ class Text extends Component {
                           </div>
                         ))}
                         </div>
-                        <button onClick={() => setViewedPosition(5, 25)}>Vedi: 5-25</button>
-                        <button onClick={() => setViewedPosition(20, 40)}>Vedi: 20-40</button>
-                        <button onClick={() => setViewedPosition(30, 50)}>Vedi: 30-50</button>
-                        <button onClick={() => setViewedPosition(40, 60)}>Vedi: 40-60</button>
-                        <button onClick={() => setViewedPosition(30, 60)}>Vedi: 30-60</button>
-                        <button onClick={() => setViewedPosition(0, 60)}>Vedi: 0-60</button>
                       </div>
                     </div>
                   </div>
 
-                  <p>
-                      <p>
-                        <div>Node Height <b>{sliders.nodeHeight}</b></div>
-                        <Slider value={sliders.nodeHeight} tipFormatter={null} onChange={setNodeHeight} />
-                      </p>
-                      <p>
-                        <div>Node Width <b>{sliders.nodeWidth}</b></div>
-                        <Slider value={sliders.nodeWidth} tipFormatter={null} onChange={setNodeWidth} />
-                      </p>
-                      <p>
-                        <div>Edge Opacity <b>{sliders.edgeOpacity}</b></div>
-                        <Slider value={sliders.edgeOpacity} tipFormatter={null} onChange={setEdgeOpacity}/>
-                      </p>
-                      <p>
-                        <div>Node Opacity <b>{sliders.nodeOpacity}</b></div>
-                        <Slider value={sliders.nodeOpacity} tipFormatter={null} onChange={setNodeOpacity} />
-                      </p>
-                  </p>
+                  <div className="facet basic-facet">
+                    <h2>Graph controls</h2>
+                    <div id="facet-graph-controls" className="facet-items-box collapse in">
+                      <div className="graph-control">
+                        <div className="graph-control-label">Node Height</div><Slider value={sliders.nodeHeight} tipFormatter={null} onChange={setNodeHeight} /><span className="slider-value">{sliders.nodeHeight}</span>
+                      </div>
+                      <div className="graph-control">
+                        <div className="graph-control-label">Node Width</div><Slider value={sliders.nodeWidth} tipFormatter={null} onChange={setNodeWidth} /><span className="slider-value">{sliders.nodeWidth}</span>
+                      </div>
+                      <div className="graph-control">
+                        <div className="graph-control-label">Edge Opacity</div><Slider value={sliders.edgeOpacity} tipFormatter={null} onChange={setEdgeOpacity}/><span className="slider-value">{sliders.edgeOpacity}</span>
+                      </div>
+                      <div className="graph-control">
+                        <div className="graph-control-label">Node Opacity</div><Slider value={sliders.nodeOpacity} tipFormatter={null} onChange={setNodeOpacity} /><span className="slider-value">{sliders.nodeOpacity}</span>
+                      </div>
+                    </div>
+                  </div>
 
                 </div>
               </Col>
               {/* MAIN AREA */}
-              <Col sm={9} md={9} mdOffset={1}>
-                <h2>{viewedPosition.start} {viewedPosition.end}</h2>
+              <Col sm={9} md={9}>
+                {/* <h2>{viewedPosition.start} {viewedPosition.end}</h2>
                 <button onClick={() => setViewedPosition(viewedPosition.start - 10, viewedPosition.end - 10)}>-10</button>
-                <button onClick={() => setViewedPosition(viewedPosition.start + 10, viewedPosition.end + 10)}>+10</button>
+                <button onClick={() => setViewedPosition(viewedPosition.start + 10, viewedPosition.end + 10)}>+10</button> */}
                 <div id="chart-area">
                   {selectedWitnesses.map(witness => (
                     <Graph key={witness} viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
@@ -187,9 +186,9 @@ class Text extends Component {
                 {/* WITNESS TEXT */}
                 <div>
                     {selectedWitnesses.map(witness => (
-                      <div className="row" key={witness}>
+                      <div className="row witness-text" key={witness}>
                         <div className="col-md-1">
-                          <p className="witness-code-yellow">
+                          <p>
                             {witness}
                           </p>
                         </div>
