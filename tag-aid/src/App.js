@@ -1,5 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
+import persistState from 'redux-localstorage'
 import { createStore, compose, applyMiddleware } from 'redux';
 import { Router, IndexRoute, Route, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
@@ -24,6 +25,14 @@ import './styles/hi-tag-aid.css';
 const sagaMiddleware = createSagaMiddleware();
 const store = createStore(rootReducer, undefined, compose(
   applyMiddleware(routerMiddleware(browserHistory), sagaMiddleware),
+  persistState(undefined, {
+    slicer : paths => {
+      return (state) => {
+        let subset = { selectedText : { filters : { sliders : state.selectedText.filters.sliders}}}
+        return subset
+      }
+    }
+  }),
   window.devToolsExtension ? window.devToolsExtension() : f => f,
 ));
 
