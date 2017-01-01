@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app). This allowed to speed up the process of setting parameters to create optimize builds. Once the application is stable, it can be [ejected](https://github.com/facebookincubator/create-react-app#converting-to-a-custom-setup), making any configuration file created by Create React App accessible for omplete control over them and custom configuration.
+This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app). This allowed to speed up setting configuration parameters and creating optimized builds. Once the application will be stable, it could be [ejected](https://github.com/facebookincubator/create-react-app#converting-to-a-custom-setup), making any configuration file  completely accessible for custom configuration.
 
 In addition to Create React App, the current version of tag-aid is based on:
 
