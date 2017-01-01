@@ -1,9 +1,7 @@
-# TAG_AID
+# TAG-AID
 
-The application is being built using React, Redux, SAGA and D3.
+This is the root of the repo, containing the following folders:
 
-It was bootstrapped using [react-create-app](https://github.com/facebookincubator/create-react-app) for easier start with no build configuration.
-
-## App.js
-
-Contains ...
+* __parser__: a python script that was developed before the tag-aid API was available, to process example GraphML files and transform them into a JSON schema useful for initial developmet of the application
+* __sankeyTest__: preliminary tests of D3's Sankey plugin
+* __tag-aid__: the main folder of the application, where all updates are pushed 
