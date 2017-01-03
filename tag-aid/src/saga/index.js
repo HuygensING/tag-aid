@@ -64,9 +64,9 @@ const getSmallerRange = (loaded, start, end) => {
   return [sStart, sEnd]
 }
 
-const T = 50
-const CALL_T = T + 50
-const CLEAR_T = CALL_T + 50
+const T = 30
+const CALL_T = T + 30
+const CLEAR_T = CALL_T + 30
 
 function *handleSetViewedPosition({ payload: { start, end } }) {
   const loadedPositions = yield select(state => state.selectedText.graph.loadedPositions)
