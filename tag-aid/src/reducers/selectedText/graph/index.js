@@ -1,4 +1,5 @@
-import { GET_GRAPH_SUCCESS } from '../../../actions'
+import { GET_GRAPH_SUCCESS, CLEAR_POSITIONS } from '../../../actions'
+import { mapValues, omit, omitBy } from 'lodash'
 
 const defaultState = {
   nodesById: {},
@@ -104,6 +105,46 @@ export default (previousState = defaultState, { type, payload }) => {
 
     console.timeEnd('GET_GRAPH_SUCCESS');
     return out;
+  } else if (type === CLEAR_POSITIONS) {
+
+    // Range to take
+    const { start, end } = payload
+
+    // Is pos to clea?
+    const isClearPos = (pos) => ((+pos) < (+start)) || ((+pos) > (+end))
+
+    // Unique nodes ids to clear
+    const nodesToClear = Object.keys(previousState.nodesAtPosition).reduce((result, pos) => {
+      if (isClearPos(pos)) {
+        return {
+          ...result,
+          ...previousState.nodesAtPosition[pos]
+        }
+      }
+      return result
+    }, {})
+
+    // Compute links ids to clear from nodes ids to clear
+    const linksToClear = Object.keys(previousState.linksByNodes).reduce((result, nodeId) => {
+      if (nodesToClear[nodeId]) {
+        return {
+          ...result,
+          ...previousState.linksByNodes[nodeId]
+        }
+      }
+      return result
+    }, {})
+
+    return {
+      nodesById: omit(previousState.nodesById, Object.keys(nodesToClear)),
+      linksById: omit(previousState.linksById, Object.keys(linksToClear)),
+      loadedPositions: omitBy(previousState.loadedPositions, (_, pos) => isClearPos(pos)),
+      nodesAtPosition: omitBy(previousState.nodesAtPosition, (_, pos) => isClearPos(pos)),
+      nodesAtPositionByWitness: mapValues(previousState.nodesAtPositionByWitness, (nodesAtPosition) =>
+        omitBy(nodesAtPosition, (_, pos) => isClearPos(pos))),
+      linksByNodes: omit(previousState.linksByNodes, Object.keys(nodesToClear))
+    }
   }
+
   return previousState;
 }

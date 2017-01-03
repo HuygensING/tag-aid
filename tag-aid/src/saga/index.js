@@ -13,6 +13,7 @@ import {
   SEARCH_TEXT_SUCCESS,
   getGraph as getGraphAction,
   searchText as searchTextAction,
+  clearPositions as clearPositionsAction,
 } from '../actions';
 import { getGraph, searchText } from '../api'
 
@@ -64,7 +65,8 @@ const getSmallerRange = (loaded, start, end) => {
 }
 
 const T = 50
-const CALL_T = T + 100
+const CALL_T = T + 50
+const CLEAR_T = CALL_T + 50
 
 function *handleSetViewedPosition({ payload: { start, end } }) {
   const loadedPositions = yield select(state => state.selectedText.graph.loadedPositions)
@@ -74,6 +76,11 @@ function *handleSetViewedPosition({ payload: { start, end } }) {
     yield put(getGraphAction(gStart, gEnd))
     console.log(`Graph: ${gStart},${gEnd}`)
   }
+}
+
+function *clearPositions() {
+  const { start, end } = yield select(state => state.selectedText.viewedPosition)
+  yield put(clearPositionsAction(Math.max(0, start - CLEAR_T), end + CLEAR_T))
 }
 
 function *handleSearchText({payload}) {
@@ -92,4 +99,5 @@ export default function *tagAidSaga() {
   yield takeLatest(GET_GRAPH, handleGetGraph);
   yield takeEvery(SET_VIEWED_POSITION, handleSetViewedPosition);
   yield takeLatest(SEARCH_TEXT, handleSearchText);
+  yield takeEvery(GET_GRAPH_SUCCESS, clearPositions);
 }

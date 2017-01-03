@@ -54,6 +54,11 @@ export const getGraph = (start, end) => ({
   payload: { start, end }
 });
 
+export const CLEAR_POSITIONS = 'CLEAR_POSITIONS';
+export const clearPositions = (start, end) => ({
+  type: CLEAR_POSITIONS,
+  payload: { start, end }
+})
 
 export const SEARCH_TEXT = 'SEARCH_TEXT';
 export const SEARCH_TEXT_LOADING = 'SEARCH_TEXT_LOADING';
