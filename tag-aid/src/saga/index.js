@@ -28,15 +28,51 @@ function *handleGetGraph({ payload: { start, end } }) {
   }
 }
 
-const K = 20
-const Y = 40
+const isRangeLoaded = (loaded, start, end) => {
+  for (let i = start; i < end; i++) {
+    if (! loaded[i]) {
+      return false
+    }
+  }
+  return true
+}
+
+const getSmallerRange = (loaded, start, end) => {
+  let sStart, sEnd
+  // Find first not loaded
+  for (let i = start; i <= end; i++) {
+    if (! loaded[i]) {
+      sStart = i
+      break
+    }
+  }
+
+  if (typeof sStart === 'undefined') {
+    // Nothing to load
+    return false
+  }
+
+  // Find last not loaded
+  for (let i = end; i >= sStart; i--) {
+    if (! loaded[i]) {
+      sEnd = i
+      break
+    }
+  }
+
+  return [sStart, sEnd]
+}
+
+const T = 50
+const CALL_T = T + 100
+
 function *handleSetViewedPosition({ payload: { start, end } }) {
   const loadedPositions = yield select(state => state.selectedText.graph.loadedPositions)
-  const lastLoadedPosition = max(Object.keys(loadedPositions).map(p => +p)) || 0
-  console.warn(start, end)
-  if (lastLoadedPosition - end < K) {
-    console.info('Calling API', lastLoadedPosition + 1, end + Y)
-    yield put(getGraphAction(lastLoadedPosition + 1, end + Y))
+  console.log(`SetViewPos: ${start},${end}`)
+  if (! isRangeLoaded(loadedPositions, Math.max(0, start - T), end + T)) {
+    let [ gStart, gEnd ] = getSmallerRange(loadedPositions, Math.max(0, start - CALL_T), end + CALL_T)
+    yield put(getGraphAction(gStart, gEnd))
+    console.log(`Graph: ${gStart},${gEnd}`)
   }
 }
 
