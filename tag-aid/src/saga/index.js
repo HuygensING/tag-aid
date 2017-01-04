@@ -64,9 +64,12 @@ const getSmallerRange = (loaded, start, end) => {
   return [sStart, sEnd]
 }
 
-const T = 30
+// Generic Graph Threshold
+const T = 90
+// API Call Threshold
 const CALL_T = T + 30
-const CLEAR_T = CALL_T + 30
+// Nodes Clear Threshold
+const CLEAR_T = CALL_T + 10
 
 function *handleSetViewedPosition({ payload: { start, end } }) {
   const loadedPositions = yield select(state => state.selectedText.graph.loadedPositions)

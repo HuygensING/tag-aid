@@ -23,6 +23,7 @@ import {
   getSankeyNodes,
   getSankeyLinks,
   getTextSearchResults,
+  getIsGraphLoading,
 } from '../selectors'
 import WitnessText from '../components/WitnessText';
 import Graph from '../components/Graph';
@@ -48,7 +49,6 @@ class Text extends Component {
       witnesses: WITNESSES.map(({ sigil }) => sigil)
     })
     this.props.setViewedPosition(0, 20);
-    // this.props.getGraph(0, 400);
   }
 
   handleSearch = () => {
@@ -83,6 +83,7 @@ class Text extends Component {
       toggleShowVarationsMarks,
       toggleShowNodes,
       toggleShowEdges,
+      isGraphLoading,
     } = this.props;
     return (
       <Grid>
@@ -229,6 +230,7 @@ class Text extends Component {
             </Col> {/* END LEFT PANEL */}
 
             <Col sm={9} md={9}>{/* MAIN AREA */}
+              {isGraphLoading && <div>Loading Graph...</div>}
               <div id="chart-area"> {/* CHART */}
                 {selectedWitnesses.map(witness => (
                   <Graph key={witness}
@@ -272,6 +274,7 @@ function mapStateToProps(state) {
   const allNodes = getSankeyNodes(state)
   const allLinks = getSankeyLinks(state)
   const searchTextResults = getTextSearchResults(state)
+  const isGraphLoading = getIsGraphLoading(state)
 
   return {
     text,
@@ -284,6 +287,7 @@ function mapStateToProps(state) {
     searching,
     results,
     searchTextResults,
+    isGraphLoading,
     sliders,
     toggles,
   }

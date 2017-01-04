@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { mapValues, range, isUndefined, includes, groupBy } from 'lodash';
+import { mapValues, range, isUndefined, includes, groupBy, every } from 'lodash';
 
 const getAllWitnesses = state => state.selectedText.text.witnesses || [];
 const getWitnessesFilters = state => state.selectedText.filters.witnesses;
@@ -61,7 +61,8 @@ export const getSankeyNodes = createSelector(
   getViewedPosition,
   (nodesById, nodesAtPosition, { start, end }) => {
     console.time("getSankeyNodes")
-    const out = range(start, end + 1 + 20)
+    // Sankey draw double of nodes and show the half...
+    const out = range(start, end + 1 + (end - start))
     .reduce((result, pos) => [...result, ...Object.keys(nodesAtPosition[pos] || {})], [])
     .map(nodeId => nodesById[nodeId])
     console.timeEnd("getSankeyNodes")
@@ -87,9 +88,17 @@ export const getSankeyLinks = createSelector(
   }
 )
 
-
 // For Checkboxes
 export const getTextSearchResults = createSelector(
   getRawTextSearchResults,
   (results) => groupBy(results, 'rank')
 );
+
+const getLoadedPositions = state => state.selectedText.graph.loadedPositions
+
+export const getIsGraphLoading = createSelector(
+  getLoadedPositions,
+  getViewedPosition,
+  (loadedPositions, { start, end }) =>
+    ! every(range(start, end + 1 + (end - start)).map(pos => loadedPositions[pos]))
+)

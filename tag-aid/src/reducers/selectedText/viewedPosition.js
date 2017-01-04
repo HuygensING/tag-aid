@@ -9,8 +9,8 @@ export default (previousState = defaultState, { type, payload }) => {
     case SET_VIEWED_POSITION:
       return {
         ...payload,
-        start: payload.start >= 0 ? payload.start : 0,
-        end: payload.end >= 20 ? payload.end : 20
+        start: payload.start,
+        end: payload.end,
       };
     default:
       return previousState;
