@@ -62,7 +62,7 @@ export const getSankeyNodes = createSelector(
   (nodesById, nodesAtPosition, { start, end }) => {
     console.time("getSankeyNodes")
     // Sankey draw double of nodes and show the half...
-    const out = range(start, end + 1 + (end - start))
+    const out = range(start, end + 1)
     .reduce((result, pos) => [...result, ...Object.keys(nodesAtPosition[pos] || {})], [])
     .map(nodeId => nodesById[nodeId])
     console.timeEnd("getSankeyNodes")
@@ -100,5 +100,5 @@ export const getIsGraphLoading = createSelector(
   getLoadedPositions,
   getViewedPosition,
   (loadedPositions, { start, end }) =>
-    ! every(range(start, end + 1 + (end - start)).map(pos => loadedPositions[pos]))
+    ! every(range(start, end + 1).map(pos => loadedPositions[pos]))
 )

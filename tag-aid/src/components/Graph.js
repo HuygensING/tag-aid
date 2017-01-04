@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import * as d3 from 'd3';
 import { sankey } from 'd3-sankey';
+import values from 'lodash'
 import '../styles/graph-style.css';
 
 const margin = {top: 40, right: 50, bottom: 40, left: 20};
@@ -76,11 +77,36 @@ export default class Graph extends Component {
     //  .attr("transform", "translate(0,30)")
     //  .call(xAxis);
 
-    const nodePosMap = allNodes.reduce((result, node, i) => ({
+    const makeNodePosMap = (nodes) => nodes.reduce((result, node, i) => ({
       ...result,
       [node.id]: i
     }), {})
 
+    // First node map
+    let nodePosMap = makeNodePosMap(allNodes)
+
+    // Calculate missing nodes
+    // const missingNodes = allLinks.reduce((result, link) => {
+    //   const missing = {}
+    //   if (typeof nodePosMap[link.source] === 'undefined') {
+    //     missing[link.source] = { id: link.source, text: 'X', rank: viewedPosition.start, fake: true }
+    //   }
+      // if (typeof nodePosMap[link.target] === 'undefined') {
+      //   missing[link.target] = { id: link.target, text: 'X' , rank: 0}
+      // }
+      // return { ...result, ...missing }
+    // }, {})
+
+    // Sankey nodes
+    const nodes = [ ...allNodes ];
+
+    // let xN = Object.keys(missingNodes).map(k => missingNodes[k])
+    // const nodes = [ ...xN, ...allNodes ];
+
+    // Re-build node map with missing nodes
+    // nodePosMap = makeNodePosMap(nodes)
+
+    // Sankey links
     const links = allLinks.map(link => ({
       ...link,
       source: nodePosMap[link.source],
@@ -90,8 +116,6 @@ export default class Graph extends Component {
     // FIXME: Do the right sort before
     .sort((a, b) => Number(a.source) - Number(b.source))
 
-    const nodes = [...allNodes];
-
     console.info("nodes and links", nodes.length, links.length)
 
     const sankeyLayout = sankey()
@@ -99,7 +123,7 @@ export default class Graph extends Component {
         .links(links)
         .nodeWidth(2)
         .nodePadding(35)
-        .size([width * 2, height])
+        .size([width, height])
         .layout(150);
 
   let path = sankeyLayout.link();
@@ -127,7 +151,7 @@ export default class Graph extends Component {
 
     // add in the links
     var link = d3.select(this.linkGroup).selectAll(".link")
-        .data(links, l=>l.id).attr("d", path)
+        .data(links, l=>+l.id).attr("d", path)
 
       link.exit().remove();
 
@@ -158,9 +182,10 @@ export default class Graph extends Component {
     //   		return d.source.name + " → " +
     //               d.target.name + "\n" + format(d.value); });
   //
+  // var node = d3.select(this.nodeGroup).selectAll(".node.fake").remove()
   // add in the nodes
     var node = d3.select(this.nodeGroup).selectAll(".node")
-        .data(nodes, d => d.id)
+        .data(nodes, d => +d.id)
         .attr("transform", function(d) {
   		  return "translate(" + d.x + "," + d.y + ")"; })
 
@@ -168,7 +193,9 @@ export default class Graph extends Component {
 
     let enter = node
       .enter().append("g")
-        .attr("class", "node")
+        .attr("class", function(d) {
+          return d.fake ? 'node fake' : 'node'
+         })
         .attr("transform", function(d) {
   		  return "translate(" + d.x + "," + d.y + ")"; })
       .call(d3.drag()
@@ -247,7 +274,11 @@ export default class Graph extends Component {
       d3.select(this).attr('dx', dx)
       if (Math.abs(dx) > 20) {
         let delta = parseInt(dx / 20);
-        setViewedPosition(viewedPosition.start + delta, viewedPosition.end + delta)
+        if (viewedPosition.start + delta < 0) {
+          setViewedPosition(0, 20)
+        } else {
+          setViewedPosition(viewedPosition.start + delta, viewedPosition.end + delta)
+        }
       }
     }
 
