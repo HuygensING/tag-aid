@@ -5,8 +5,8 @@ import values from 'lodash'
 import '../styles/graph-style.css';
 
 const margin = {top: 40, right: 50, bottom: 40, left: 20};
-    const width = 1000 - margin.left - margin.right;
-    const height = 200 - margin.top - margin.bottom;
+const width = 1000 - margin.left - margin.right;
+const height = 200 - margin.top - margin.bottom;
 
 export default class Graph extends Component {
 

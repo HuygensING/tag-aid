@@ -5,10 +5,13 @@ export const setTexts = (texts) => ({
 });
 
 export const SET_SELECTED_TEXT = 'SET_SELECTED_TEXT';
-export const setSelectedText = (text) => ({
-  type: SET_SELECTED_TEXT,
-  payload: text
-});
+export const SET_SELECTED_TEXT_LOADING = 'SET_SELECTED_TEXT_LOADING';
+export const SET_SELECTED_TEXT_FAILURE = 'SET_SELECTED_TEXT_FAILURE';
+export const SET_SELECTED_TEXT_SUCCESS = 'SET_SELECTED_TEXT_SUCCESS';
+export const setSelectedText = () => ({ type: SET_SELECTED_TEXT });
+// Clean up the redux state from selected text
+export const UNLOAD_SELECTED_TEXT = 'UNLOAD_SELECTED_TEXT'
+export const unloadSelectedText = () => ({ type: UNLOAD_SELECTED_TEXT });
 
 export const TOGGLE_WITNESS = 'TOGGLE_WITNESS';
 export const toggleWitness = (witness) => ({

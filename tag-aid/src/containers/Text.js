@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import {
   setSelectedText,
+  unloadSelectedText,
   toggleWitness,
   getGraph,
   setViewedPosition,
@@ -32,8 +33,6 @@ import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import '../styles/hi-faceted-search.css';
 
-const WITNESSES = [{"sigil":"Kr299"},{"sigil":"MuU151"},{"sigil":"Mu11475"},{"sigil":"Kf133"},{"sigil":"Gr314"},{"sigil":"Go325"},{"sigil":"An74"},{"sigil":"Er16"},{"sigil":"Kr185"},{"sigil":"Mu22405"},{"sigil":"Au318"},{"sigil":"Wi3818"},{"sigil":"Mu28315"},{"sigil":"Ba96"},{"sigil":"Sg524"}]
-
 class Text extends Component {
 
   constructor(props){
@@ -43,12 +42,19 @@ class Text extends Component {
       searchedCurrentToken : false
     }
   }
+
   componentWillMount() {
-    this.props.setSelectedText({
-      title: 'Parzival',
-      witnesses: WITNESSES.map(({ sigil }) => sigil)
-    })
-    this.props.setViewedPosition(0, 20);
+    this.props.setSelectedText();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.text !== this.props.text) {
+      this.props.setViewedPosition(0, 20);
+    }
+  }
+
+  componentWillUnmount() {
+    this.props.unloadSelectedText();
   }
 
   handleSearch = () => {
@@ -57,8 +63,14 @@ class Text extends Component {
   }
 
   render() {
+    // Loading main text info nothing to do
+    if (!this.props.text) {
+      return <div>Loading text...</div>
+    }
+
     const {
-      text: { title, witnesses },
+      text,
+      text: { witnesses },
       viewedPosition,
       witnessesCheck,
       selectedWitnesses,
@@ -85,6 +97,7 @@ class Text extends Component {
       toggleShowEdges,
       isGraphLoading,
     } = this.props;
+
     return (
       <Grid>
 
@@ -93,7 +106,7 @@ class Text extends Component {
               <Button bsClass="btn-collapse-left-pane" componentClass="btn-collapse-left-pane">
                 <span className="glyphicon glyphicon-menu-hamburger"></span>
               </Button>
-              <h1>{title}</h1>
+              <h1>{text.name}</h1>
             </Col>
           </Row> {/* END TEXT NAME */}
 
@@ -264,6 +277,11 @@ class Text extends Component {
 }
 
 function mapStateToProps(state) {
+  // Loading main text info
+  if (!state.selectedText.text) {
+    return {}
+  }
+
   const { text, viewedPosition } = state.selectedText
   const { searching, results } = state.selectedText.search;
   const sliders = state.selectedText.filters.sliders;
@@ -295,6 +313,7 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, {
   setSelectedText,
+  unloadSelectedText,
   toggleWitness,
   getGraph,
   setViewedPosition,

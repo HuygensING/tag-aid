@@ -11,11 +11,15 @@ import {
   SEARCH_TEXT_LOADING,
   SEARCH_TEXT_FAILURE,
   SEARCH_TEXT_SUCCESS,
+  SET_SELECTED_TEXT,
+  SET_SELECTED_TEXT_LOADING,
+  SET_SELECTED_TEXT_FAILURE,
+  SET_SELECTED_TEXT_SUCCESS,
   getGraph as getGraphAction,
   searchText as searchTextAction,
   clearPositions as clearPositionsAction,
 } from '../actions';
-import { getGraph, searchText } from '../api'
+import { getGraph, searchText, getTextInfo, getTextWitnesses } from '../api'
 
 function *handleGetGraph({ payload: { start, end } }) {
 
@@ -97,10 +101,26 @@ function *handleSearchText({payload}) {
   }
 }
 
+function *handleSetSelectedText() {
+  yield put({ type: SET_SELECTED_TEXT_LOADING });
+  try {
+    const [ text, witnesses ] = yield [ call(getTextInfo), call(getTextWitnesses) ]
+    console.info(text, witnesses)
+    yield put({ type: SET_SELECTED_TEXT_SUCCESS, payload: {
+      ...text,
+      maxNodes: +text.max_rank,
+      witnesses: witnesses.map(({ sigil }) => sigil),
+    }})
+  } catch (error) {
+    yield put({ type: SET_SELECTED_TEXT_FAILURE, error });
+  }
+}
+
 
 export default function *tagAidSaga() {
   yield takeLatest(GET_GRAPH, handleGetGraph);
   yield takeEvery(SET_VIEWED_POSITION, handleSetViewedPosition);
   yield takeLatest(SEARCH_TEXT, handleSearchText);
   yield takeEvery(GET_GRAPH_SUCCESS, clearPositions);
+  yield takeLatest(SET_SELECTED_TEXT, handleSetSelectedText);
 }

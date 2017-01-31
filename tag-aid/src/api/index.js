@@ -27,3 +27,11 @@ export const getGraph = (start, end) =>
 export const searchText = (text) =>
   fetchJson(`/stemmarest/tradition/${TEXT_ID}/search/${text}`)
   .then(({ json }) => json)
+
+export const getTextInfo = () =>
+  fetchJson(`/stemmarest/tradition/${TEXT_ID}`)
+  .then(({ json }) => json)
+
+export const getTextWitnesses = () =>
+  fetchJson(`/stemmarest/tradition/${TEXT_ID}/witnesses`)
+  .then(({ json }) => json)
