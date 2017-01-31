@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import * as d3 from 'd3';
 import { sankey } from 'd3-sankey';
-import values from 'lodash'
+import { some } from 'lodash'
 import '../styles/graph-style.css';
 
 const margin = {top: 40, right: 50, bottom: 40, left: 20};
@@ -155,10 +155,19 @@ export default class Graph extends Component {
 
       link.exit().remove();
 
+      const isLinkGraphWitness = (l) => l.witness.indexOf(this.props.witness) !== -1
+      const isNodeGraphWitness = (n) =>
+        some(n.sourceLinks, isLinkGraphWitness) || some(n.targetLinks, isLinkGraphWitness)
+
       link
         .enter().append("path")
-        .attr("class", (d)=>{ return `link with-source-${d.source.id} with-target-${d.target.id}`;})
-        .attr('opacity', this.props.edgeOpacity)
+        .attr("class", (d) => {
+          const witnessClass = isLinkGraphWitness(d) ? 'link-graph-witness' : ''
+          return `link with-source-${d.source.id} with-target-${d.target.id} ${witnessClass}`;
+        })
+        .attr('opacity', (d) => {
+          return isLinkGraphWitness(d) ? this.props.edgeOpacity : '1'
+        })
         .style("visibility", this.props.showEdges ? "visible" : "hidden")
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
@@ -219,11 +228,15 @@ export default class Graph extends Component {
         })
     // add circles on top of the rectangles
     enter.append("circle")
-        .attr("class", "circle-shape")
+        .attr("class", (d) => {
+          return isNodeGraphWitness(d) ? 'circle-shape circle-shape-graph-witness' : 'circle-shape'
+        })
         .attr("cx", function(d) { return d.dx-1; })
         .attr("cy", 0)
         .attr("r", this.props.nodeWidth / 2)
-        .attr('opacity', this.props.nodeOpacity)
+        .attr('opacity', (d) => {
+          return isNodeGraphWitness(d) ? this.props.nodeOpacity : '1'
+        })
         .style("visibility", this.props.showNodes ? "visible" : "hidden")
         .style("fill", function(d){
   	      	if (d.majority === "true") {
@@ -295,7 +308,7 @@ export default class Graph extends Component {
   }
 
   updateNodeOpacity(opacity){
-    d3.selectAll('.circle-shape')
+    d3.selectAll('.circle-shape-graph-witness')
       .style("opacity", this.props.nodeOpacity)
   }
 
@@ -310,7 +323,7 @@ export default class Graph extends Component {
   }
 
   updateEdgeOpacity(opacity){
-    d3.selectAll('path.link')
+    d3.selectAll('path.link-graph-witness')
       .style("opacity", this.props.edgeOpacity)
   }
 

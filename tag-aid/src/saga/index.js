@@ -106,7 +106,6 @@ function *handleSetSelectedText() {
   yield put({ type: SET_SELECTED_TEXT_LOADING });
   try {
     const [ text, witnesses ] = yield [ call(getTextInfo), call(getTextWitnesses) ]
-    console.info(text, witnesses)
     yield put({ type: SET_SELECTED_TEXT_SUCCESS, payload: {
       ...text,
       maxNodes: +text.max_rank,
