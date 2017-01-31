@@ -17,8 +17,8 @@ export const getGraph = (start, end) =>
     relationships: graph.relationships.map(link => {
       const swappedLink = {
         ...link,
-        source: link.target,
-        target: link.source
+        // source: link.target,
+        // target: link.source
       }
       return swappedLink
     })
