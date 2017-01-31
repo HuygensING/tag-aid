@@ -269,13 +269,16 @@ export default class Graph extends Component {
 
     const that = this;
     const graphDrag = function(d, evt) {
-      const { setViewedPosition, viewedPosition } = that.props;
+      const { setViewedPosition, viewedPosition, maxNodes } = that.props;
       const dx = Number(d3.select(this).attr('dx') || 0) - d3.event.dx
       d3.select(this).attr('dx', dx)
       if (Math.abs(dx) > 20) {
         let delta = parseInt(dx / 20);
+        setViewedPosition(viewedPosition.start + delta, viewedPosition.end + delta)
         if (viewedPosition.start + delta < 0) {
           setViewedPosition(0, 20)
+        } else if (viewedPosition.end + delta > maxNodes) {
+          setViewedPosition(maxNodes - 20, maxNodes)
         } else {
           setViewedPosition(viewedPosition.start + delta, viewedPosition.end + delta)
         }

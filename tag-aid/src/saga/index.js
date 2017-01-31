@@ -77,9 +77,10 @@ const CLEAR_T = CALL_T + 10
 
 function *handleSetViewedPosition({ payload: { start, end } }) {
   const loadedPositions = yield select(state => state.selectedText.graph.loadedPositions)
+  const maxNodes = yield select(state => state.selectedText.text.maxNodes)
   console.log(`SetViewPos: ${start},${end}`)
-  if (! isRangeLoaded(loadedPositions, Math.max(0, start - T), end + T)) {
-    let [ gStart, gEnd ] = getSmallerRange(loadedPositions, Math.max(0, start - CALL_T), end + CALL_T)
+  if (! isRangeLoaded(loadedPositions, Math.max(0, start - T), Math.min(end + T, maxNodes))) {
+    let [ gStart, gEnd ] = getSmallerRange(loadedPositions, Math.max(0, start - CALL_T), Math.min(end + CALL_T, maxNodes))
     yield put(getGraphAction(gStart, gEnd))
     console.log(`Graph: ${gStart},${gEnd}`)
   }

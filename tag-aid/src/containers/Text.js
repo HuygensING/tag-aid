@@ -70,7 +70,7 @@ class Text extends Component {
 
     const {
       text,
-      text: { witnesses },
+      text: { witnesses, maxNodes },
       viewedPosition,
       witnessesCheck,
       selectedWitnesses,
@@ -247,6 +247,7 @@ class Text extends Component {
               <div id="chart-area"> {/* CHART */}
                 {selectedWitnesses.map(witness => (
                   <Graph key={witness}
+                    maxNodes={maxNodes}
                     nodeOpacity={sliders.nodeOpacity} nodeWidth={sliders.nodeWidth}
                     edgeOpacity={sliders.edgeOpacity}
                     showNodes={toggles.showNodes} showEdges={toggles.showEdges}
