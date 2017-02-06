@@ -7,7 +7,7 @@ import { syncHistoryWithStore, routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
 import rootReducer from './reducers';
 import rootSaga from './saga';
-import MainNav from './components/MainNav';
+import Layout from './components/Layout';
 import Home from './containers/Home';
 import About from './components/About';
 import Help from './components/Help';
@@ -41,13 +41,14 @@ sagaMiddleware.run(rootSaga);
 const history = syncHistoryWithStore(browserHistory, store);
 const App = () => (
   <div>
-    <MainNav />
     <Provider store={store}>
       <Router history={history}>
-        <Route path={'/'} component={Home} />
-        <Route path={'/text/:textId'} component={Text} />
-        <Route path={'/help'} component={Help} />
-        <Route path={'/about'} component={About} />
+        <Route path='/' component={Layout}>
+          <IndexRoute component={Home} />
+          <Route path={'/text/:textId'} component={Text} />
+          <Route path={'/help'} component={Help} />
+          <Route path={'/about'} component={About} />
+        </Route>
       </Router>
     </Provider>
   </div>

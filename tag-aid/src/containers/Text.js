@@ -119,7 +119,6 @@ class Text extends Component {
           </Row> {/* END TEXT NAME */}
 
           <Row> {/* MAIN ROW */}
-          <Link to='/text/7cc668e5-ec37-47cb-a1b6-360766ce942d'>Parzival-249-255</Link>
             <Col sm={3} md={3} id="left-pane">{/* LEFT PANEL */}
               <div className="facet-group">
                 <div className="facet"> {/* SEARCH */}
