@@ -4,6 +4,7 @@ import { mapValues, range, isUndefined, includes, groupBy, every } from 'lodash'
 const getAllWitnesses = state => state.selectedText.text.witnesses || [];
 const getWitnessesFilters = state => state.selectedText.filters.witnesses;
 const getRawTextSearchResults = state => state.selectedText.search.results;
+const getMaxNodes = state => state.selectedText.text.maxNodes;
 
 // For Checkboxes
 export const getWitnessesCheck = createSelector(
@@ -99,6 +100,7 @@ const getLoadedPositions = state => state.selectedText.graph.loadedPositions
 export const getIsGraphLoading = createSelector(
   getLoadedPositions,
   getViewedPosition,
-  (loadedPositions, { start, end }) =>
-    ! every(range(start, end + 1).map(pos => loadedPositions[pos]))
+  getMaxNodes,
+  (loadedPositions, { start, end }, maxNodes) =>
+    ! every(range(start, Math.min(end + 1, maxNodes)).map(pos => loadedPositions[pos]))
 )
