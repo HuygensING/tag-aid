@@ -13,7 +13,7 @@ export default class Graph extends Component {
     this.updateNodeWidth(this.props.nodeWidth);
     this.updateEdgeOpacity(this.props.edgeOpacity);
     this.updateNodeVisibility(this.props.showNodes);
-    // this.updateEdgeVisibility(this.props.showEdges);
+    this.updateEdgeVisibility(this.props.showEdges);
   }
 
   shouldComponentUpdate() {
@@ -226,16 +226,15 @@ export default class Graph extends Component {
         .attr("cy", 0)
         .attr("r", this.props.nodeWidth / 2)
         .attr('opacity', (d) => {
-          return isNodeGraphWitness(d) ? this.props.nodeOpacity : '1'
+          return (!this.props.showNodes || isNodeGraphWitness(d)) ? this.props.nodeOpacity : '1'
         })
-        .style("visibility", this.props.showNodes ? "visible" : "hidden")
-        .style("fill", function(d){
-  	      	if (d.majority === "true") {
-  	      		return "red";
-  	      	} else {
-  	      		return "#aaa";
-  	      	}
-        	})
+        // .style("visibility", this.props.showNodes ? "visible" : "hidden")
+        .style("fill", (d) => {
+          if (this.props.showNodes && isNodeGraphWitness(d)) {
+            return colorScale(this.props.witness);
+          }
+      		return "#aaa";
+      	});
 
     // add in the title for the nodes
     enter.append("text")
@@ -298,13 +297,23 @@ export default class Graph extends Component {
   }
 
   updateNodeOpacity(opacity){
-    d3.select(this.svg).selectAll('.circle-shape-graph-witness')
-      .style("opacity", this.props.nodeOpacity)
+    if (this.props.showNodes) {
+      d3.select(this.svg).selectAll('.circle-shape-graph-witness')
+        .style("opacity", opacity)
+    }
   }
 
   updateNodeVisibility(visibility){
-    d3.select(this.svg).selectAll('.circle-shape')
-      .style("visibility", visibility ? "visible" : "hidden")
+    if (visibility) {
+      const colorScale = this.makeColorScale();
+      d3.select(this.svg).selectAll('.circle-shape-graph-witness')
+        .style('fill', colorScale(this.props.witness))
+        .style('opacity', this.props.nodeOpacity);
+    } else {
+      d3.select(this.svg).selectAll('.circle-shape-graph-witness')
+        .style('fill', '#aaa')
+        .style('opacity', '1')
+    }
   }
 
   updateNodeWidth(width){
@@ -324,7 +333,7 @@ export default class Graph extends Component {
       const colorScale = this.makeColorScale();
       d3.select(this.svg).selectAll('path.link-graph-witness')
         .style('stroke', colorScale(this.props.witness))
-        .style('opacity', '' + this.props.edgeOpacity);
+        .style('opacity', this.props.edgeOpacity);
     } else {
       d3.select(this.svg).selectAll('path.link-graph-witness')
         .style('stroke', '#f0f0f0')
