@@ -45,7 +45,7 @@ const App = () => (
     <Provider store={store}>
       <Router history={history}>
         <Route path={'/'} component={Home} />
-        <Route path={'/text'} component={Text} />
+        <Route path={'/text/:textId'} component={Text} />
         <Route path={'/help'} component={Help} />
         <Route path={'/about'} component={About} />
       </Router>

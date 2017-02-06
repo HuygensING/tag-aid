@@ -1,45 +1,44 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
-import { setTexts } from '../actions';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router'
+import { getTexts } from '../actions'
 
-class HomeComponent extends Component {
+class Home extends Component {
   componentWillMount() {
-    this.props.setTexts([
-      {
-        id: 1,
-        name: 'Parzival',
-        chronology: 'medieval'
-      }
-    ]);
+    this.props.getTexts()
   }
 
   render() {
-    //const { texts } = this.props;
+    const { texts } = this.props
+
+    if (!texts) {
+      return (
+        <div>Loading texts...</div>
+      )
+    }
+
     return (
       <div className="container big-margin">
         <h1>Texts</h1>
-        {this.props.texts.map(text => (
+        {texts.map(text => (
           <div key={text.id}>
-            <Link to={`/text`}>
+            <Link to={`/text/${text.id}`}>
               <div>{text.name}</div>
             </Link>
             <div>{text.chronology}</div>
           </div>
         ))}
       </div>
-    );
+    )
   }
 }
 
 function mapStateToProps(state) {
   return {
-    texts: state.indexTexts // Mapping dello stato sulla prop Texts
+    texts: state.indexTexts
   }
 }
 
-const Home = connect(mapStateToProps, {
-  setTexts // ACTION CREATOR; una funzione che fa il dispatch di una action
-})(HomeComponent); // Crea il componente Home
-
-export default Home;
+export default connect(mapStateToProps, {
+  getTexts,
+})(Home)

@@ -1,7 +1,10 @@
 import { fetchJson } from '../util/fetch';
 
 const API_URL = 'https://tag-aid.huygens.knaw.nl'
-const TEXT_ID = 'aeb7d4b8-15af-4cb5-8c87-fa38661943a0'
+
+// DEBUG Utiliy to wrap API call in timeout...
+const ttime = (fn, time) => (...args) =>
+  new Promise(resolve => setTimeout(() => resolve(), time)).then(() => fn(...args))
 
 // export const getGraph = (start, end) =>
 //   fetchJson(`/data/vizgraph_${start}-${end}.json`).then(({ json }) => json)
@@ -10,17 +13,20 @@ const TEXT_ID = 'aeb7d4b8-15af-4cb5-8c87-fa38661943a0'
 //     links: json.links.map(link => ({ ...link, linkId: `${link.source}-${link.target}` }))
 //   }))
 
-export const getGraph = (start, end) =>
-  fetchJson(`/stemmarest/tradition/${TEXT_ID}/subgraph/${start}/${end}`).then(({ json }) => json)
+export const getTexts = () =>
+  fetchJson(`/stemmarest/traditions`).then(({ json }) => json)
 
-export const searchText = (text) =>
-  fetchJson(`/stemmarest/tradition/${TEXT_ID}/search/${text}`)
+export const getGraph = (textId, start, end) =>
+  fetchJson(`/stemmarest/tradition/${textId}/subgraph/${start}/${end}`).then(({ json }) => json)
+
+export const searchText = (textId, text) =>
+  fetchJson(`/stemmarest/tradition/${textId}/search/${text}`)
   .then(({ json }) => json)
 
-export const getTextInfo = () =>
-  fetchJson(`/stemmarest/tradition/${TEXT_ID}`)
+export const getTextInfo = (textId) =>
+  fetchJson(`/stemmarest/tradition/${textId}`)
   .then(({ json }) => json)
 
-export const getTextWitnesses = () =>
-  fetchJson(`/stemmarest/tradition/${TEXT_ID}/witnesses`)
+export const getTextWitnesses = (textId) =>
+  fetchJson(`/stemmarest/tradition/${textId}/witnesses`)
   .then(({ json }) => json)

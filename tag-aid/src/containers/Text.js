@@ -44,21 +44,30 @@ class Text extends Component {
   }
 
   componentWillMount() {
-    this.props.setSelectedText();
+    this.props.setSelectedText(this.props.params.textId)
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.text !== this.props.text) {
+    if (nextProps.params.textId !== this.props.params.textId) {
+      // Reset state realated to current text and load the new λ
+      this.props.unloadSelectedText()
+      this.setState({
+        searchToken: '',
+        searchedCurrentToken: false
+      })
+      this.props.setSelectedText(this.props.params.textId)
+    }
+    if (nextProps.text && nextProps.text !== this.props.text) {
       this.props.setViewedPosition(0, 20);
     }
   }
 
   componentWillUnmount() {
-    this.props.unloadSelectedText();
+    this.props.unloadSelectedText()
   }
 
   handleSearch = () => {
-    this.setState({ searchedCurrentToken:true });
+    this.setState({ searchedCurrentToken: true });
     this.props.searchText(this.state.searchToken);
   }
 
@@ -100,7 +109,6 @@ class Text extends Component {
 
     return (
       <Grid>
-
           <Row> {/* TEXT NAME */}
             <Col md={12} className="text-header">
               <Button bsClass="btn-collapse-left-pane" componentClass="btn-collapse-left-pane">
@@ -111,6 +119,7 @@ class Text extends Component {
           </Row> {/* END TEXT NAME */}
 
           <Row> {/* MAIN ROW */}
+          <Link to='/text/7cc668e5-ec37-47cb-a1b6-360766ce942d'>Parzival-249-255</Link>
             <Col sm={3} md={3} id="left-pane">{/* LEFT PANEL */}
               <div className="facet-group">
                 <div className="facet"> {/* SEARCH */}
@@ -248,11 +257,19 @@ class Text extends Component {
                 {selectedWitnesses.map(witness => (
                   <Graph key={witness}
                     maxNodes={maxNodes}
-                    nodeOpacity={sliders.nodeOpacity} nodeWidth={sliders.nodeWidth}
+                    nodeOpacity={sliders.nodeOpacity}
+                    nodeWidth={sliders.nodeWidth}
                     edgeOpacity={sliders.edgeOpacity}
-                    showNodes={toggles.showNodes} showEdges={toggles.showEdges}
+                    showNodes={toggles.showNodes}
+                    showEdges={toggles.showEdges}
                     showVarationsMarks={toggles.showVarationsMarks}
-                    viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} nodes={allNodes} links={allLinks} witness={witness} witnesses={witnesses} />
+                    viewedPosition={viewedPosition}
+                    setViewedPosition={setViewedPosition}
+                    nodes={allNodes}
+                    links={allLinks}
+                    witness={witness}
+                    witnesses={witnesses}
+                  />
                 ))}
               </div> {/* END CHART */}
               <div> {/* WITNESS TEXT */}

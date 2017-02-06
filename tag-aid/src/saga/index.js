@@ -1,6 +1,7 @@
-import { takeEvery, takeLatest, delay } from 'redux-saga';
-import { put, call, select } from 'redux-saga/effects';
+import { takeLatest, delay } from 'redux-saga';
+import { put, call, select, fork } from 'redux-saga/effects';
 import { max } from 'lodash'
+import { takeLatestAndCancel, takeEveryAndCancel } from './helpers'
 import {
   GET_GRAPH,
   GET_GRAPH_LOADING,
@@ -15,18 +16,30 @@ import {
   SET_SELECTED_TEXT_LOADING,
   SET_SELECTED_TEXT_FAILURE,
   SET_SELECTED_TEXT_SUCCESS,
+  UNLOAD_SELECTED_TEXT,
+  GET_TEXTS,
+  GET_TEXTS_LOADING,
+  GET_TEXTS_FAILURE,
+  GET_TEXTS_SUCCESS,
   getGraph as getGraphAction,
   searchText as searchTextAction,
   clearPositions as clearPositionsAction,
 } from '../actions';
-import { getGraph, searchText, getTextInfo, getTextWitnesses } from '../api'
+import {
+  getGraph,
+  searchText,
+  getTextInfo,
+  getTextWitnesses,
+  getTexts,
+} from '../api'
 
 function *handleGetGraph({ payload: { start, end } }) {
 
   yield call(delay, 100);
   yield put({ type: GET_GRAPH_LOADING });
+  const textId = yield select(state => state.selectedText.text.id)
   try {
-    const graph = yield call(getGraph, start, end)
+    const graph = yield call(getGraph, textId, start, end)
     yield put({ type: GET_GRAPH_SUCCESS, payload: { start, end, graph }})
   } catch (error) {
     yield put({ type: GET_GRAPH_FAILURE, error });
@@ -94,18 +107,22 @@ function *clearPositions() {
 function *handleSearchText({payload}) {
 
   yield put({ type: SEARCH_TEXT_LOADING });
+  const textId = yield select(state => state.selectedText.text.id)
   try {
-    const results = yield call(searchText, payload)
+    const results = yield call(searchText, textId, payload)
     yield put({ type: SEARCH_TEXT_SUCCESS, payload: results})
   } catch (error) {
     yield put({ type: SEARCH_TEXT_FAILURE, error });
   }
 }
 
-function *handleSetSelectedText() {
+function *handleSetSelectedText({ payload }) {
   yield put({ type: SET_SELECTED_TEXT_LOADING });
   try {
-    const [ text, witnesses ] = yield [ call(getTextInfo), call(getTextWitnesses) ]
+    const [ text, witnesses ] = yield [
+      call(getTextInfo, payload),
+      call(getTextWitnesses, payload)
+    ]
     yield put({ type: SET_SELECTED_TEXT_SUCCESS, payload: {
       ...text,
       maxNodes: +text.max_rank,
@@ -116,11 +133,22 @@ function *handleSetSelectedText() {
   }
 }
 
+function *handleGetTexts() {
+  yield put({ type: GET_TEXTS_LOADING })
+  try {
+    const texts = yield call(getTexts)
+    yield put({ type: GET_TEXTS_SUCCESS, payload: texts })
+  } catch (error) {
+    yield put({ type: GET_TEXTS_FAILURE, error })
+  }
+}
 
 export default function *tagAidSaga() {
-  yield takeLatest(GET_GRAPH, handleGetGraph);
-  yield takeEvery(SET_VIEWED_POSITION, handleSetViewedPosition);
-  yield takeLatest(SEARCH_TEXT, handleSearchText);
-  yield takeEvery(GET_GRAPH_SUCCESS, clearPositions);
-  yield takeLatest(SET_SELECTED_TEXT, handleSetSelectedText);
+  yield fork(takeLatestAndCancel, GET_GRAPH, UNLOAD_SELECTED_TEXT, handleGetGraph);
+  yield fork(takeEveryAndCancel, SET_VIEWED_POSITION, UNLOAD_SELECTED_TEXT, handleSetViewedPosition);
+  yield fork(takeLatestAndCancel, SEARCH_TEXT, UNLOAD_SELECTED_TEXT, handleSearchText);
+  yield fork(takeEveryAndCancel, GET_GRAPH_SUCCESS, UNLOAD_SELECTED_TEXT, clearPositions);
+  yield fork(takeLatestAndCancel, SET_SELECTED_TEXT, UNLOAD_SELECTED_TEXT, handleSetSelectedText);
+
+  yield takeLatest(GET_TEXTS, handleGetTexts);
 }

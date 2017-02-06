@@ -1,14 +1,19 @@
-export const SET_TEXTS = 'SET_TEXTS';
-export const setTexts = (texts) => ({
-  type: SET_TEXTS,
-  payload: texts
+export const GET_TEXTS = 'GET_TEXTS';
+export const GET_TEXTS_LOADING = 'GET_TEXTS_LOADING';
+export const GET_TEXTS_FAILURE = 'GET_TEXTS_FAILURE';
+export const GET_TEXTS_SUCCESS = 'GET_TEXTS_SUCCESS';
+export const getTexts = (texts) => ({
+  type: GET_TEXTS,
 });
 
 export const SET_SELECTED_TEXT = 'SET_SELECTED_TEXT';
 export const SET_SELECTED_TEXT_LOADING = 'SET_SELECTED_TEXT_LOADING';
 export const SET_SELECTED_TEXT_FAILURE = 'SET_SELECTED_TEXT_FAILURE';
 export const SET_SELECTED_TEXT_SUCCESS = 'SET_SELECTED_TEXT_SUCCESS';
-export const setSelectedText = () => ({ type: SET_SELECTED_TEXT });
+export const setSelectedText = (textId) => ({
+  type: SET_SELECTED_TEXT,
+  payload: textId
+});
 // Clean up the redux state from selected text
 export const UNLOAD_SELECTED_TEXT = 'UNLOAD_SELECTED_TEXT'
 export const unloadSelectedText = () => ({ type: UNLOAD_SELECTED_TEXT });
