@@ -4,23 +4,19 @@ import { sankey } from 'd3-sankey';
 import { some } from 'lodash'
 import '../styles/graph-style.css';
 
-const margin = {top: 40, right: 50, bottom: 40, left: 20};
-const width = 1000 - margin.left - margin.right;
-const height = 200 - margin.top - margin.bottom;
-
 export default class Graph extends Component {
 
   componentDidMount() {
     this.drawSankey(this.props.nodes, this.props.links);
-    this.attachEventHandlers()
+    this.attachEventHandlers();
     this.updateNodeOpacity(this.props.nodeOpacity);
     this.updateNodeWidth(this.props.nodeWidth);
     this.updateEdgeOpacity(this.props.edgeOpacity);
     this.updateNodeVisibility(this.props.showNodes);
-    this.updateEdgeVisibility(this.props.showEdges);
+    // this.updateEdgeVisibility(this.props.showEdges);
   }
 
-  shouldComponentUpdate(){
+  shouldComponentUpdate() {
     return false;
   }
 
@@ -48,34 +44,48 @@ export default class Graph extends Component {
     if((nextProps.showEdges !== this.props.showEdges)){
       this.updateEdgeVisibility(nextProps.showEdges);
     }
-
   }
 
+  makeColorScale = () => {
+    const colors = [
+      "#F34336",
+      "#E81E63",
+      "#9B27AF",
+      "#673AB6",
+      "#3F51B4",
+      "#2195F2",
+      "#03A8F3",
+      "#00BBD3",
+      "#009587",
+      "#4CAE50",
+      "#8AC24A",
+      "#CCDB39",
+      "#FEEA3B",
+      "#FEC007",
+      "#FE9700",
+      "#FE5722",
+    ];
+    console.log('~~', this.props.witnesses)
+    const colorScale = d3.scaleOrdinal()
+      .domain(this.props.witnesses)
+      .range(colors);
+    return colorScale;
+  }
 
   drawSankey(allNodes, allLinks) {
     const { setViewedPosition, viewedPosition } = this.props;
 
+    const margin = { top: 40, right: 50, bottom: 40, left: 20 };
+    const width = 1000 - margin.left - margin.right;
+    const height = 200 - margin.top - margin.bottom;
 
     // append the svg sankey
     const svg = d3.select(this.svg)
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
 
     const topG = d3.select(this.topG)
-        .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
-        //
-
-    const xScale = d3
-      .scaleLinear()
-      .domain([0, 29])
-      .range([0, width]);
-
-    // const xAxis = d3.axisBottom(xScale);
-    // svg
-    //  .append("g")
-    //  .attr("transform", "translate(0,30)")
-    //  .call(xAxis);
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     const makeNodePosMap = (nodes) => nodes.reduce((result, node, i) => ({
       ...result,
@@ -127,26 +137,7 @@ export default class Graph extends Component {
         .layout(150);
 
   let path = sankeyLayout.link();
-  const colors = ["#F34336",
-                  "#E81E63",
-                  "#9B27AF",
-                  "#673AB6",
-                  "#3F51B4",
-                  "#2195F2",
-                  "#03A8F3",
-                  "#00BBD3",
-                  "#009587",
-                  "#4CAE50",
-                  "#8AC24A",
-                  "#CCDB39",
-                  "#FEEA3B",
-                  "#FEC007",
-                  "#FE9700",
-                  "#FE5722"];
-  const colorScale = d3.scaleOrdinal()
-                      .domain(this.props.witnesses)
-                      .range(colors);
-
+  const colorScale = this.makeColorScale();
 
 
     // add in the links
@@ -165,14 +156,14 @@ export default class Graph extends Component {
           const witnessClass = isLinkGraphWitness(d) ? 'link-graph-witness' : ''
           return `link with-source-${d.source.id} with-target-${d.target.id} ${witnessClass}`;
         })
-        .attr('opacity', (d) => {
-          return isLinkGraphWitness(d) ? this.props.edgeOpacity : '1'
+        .style('opacity', (d) => {
+          return (!this.props.showEdges || isLinkGraphWitness(d)) ? this.props.edgeOpacity : '1'
         })
-        .style("visibility", this.props.showEdges ? "visible" : "hidden")
+        // .style("visibility", this.props.showEdges ? "visible" : "hidden")
         .attr("d", path)
         .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-        .style("stroke",(d) => {
-          if (d.witness.indexOf(this.props.witness) !== -1) {
+        .style("stroke", (d) => {
+          if (this.props.showEdges && isLinkGraphWitness(d)) {
             return colorScale(this.props.witness);
           }
           return '#f0f0f0';
@@ -279,8 +270,8 @@ export default class Graph extends Component {
   }
 
   attachEventHandlers(){
-
     const that = this;
+
     const graphDrag = function(d, evt) {
       const { setViewedPosition, viewedPosition, maxNodes } = that.props;
       const dx = Number(d3.select(this).attr('dx') || 0) - d3.event.dx
@@ -304,34 +295,42 @@ export default class Graph extends Component {
 
     d3.select(this.svg)
       .call(d3.drag().on("drag", graphDrag).on("end", graphDragEnd))
-
   }
 
   updateNodeOpacity(opacity){
-    d3.selectAll('.circle-shape-graph-witness')
+    d3.select(this.svg).selectAll('.circle-shape-graph-witness')
       .style("opacity", this.props.nodeOpacity)
   }
 
   updateNodeVisibility(visibility){
-    d3.selectAll('.circle-shape')
+    d3.select(this.svg).selectAll('.circle-shape')
       .style("visibility", visibility ? "visible" : "hidden")
   }
 
   updateNodeWidth(width){
-    d3.selectAll('.circle-shape')
+    d3.select(this.svg).selectAll('.circle-shape')
       .attr("r", width / 2)
   }
 
-  updateEdgeOpacity(opacity){
-    d3.selectAll('path.link-graph-witness')
-      .style("opacity", this.props.edgeOpacity)
+  updateEdgeOpacity(opacity) {
+    if (this.props.showEdges) {
+      d3.select(this.svg).selectAll('path.link-graph-witness')
+        .style("opacity", opacity);
+    }
   }
 
-  updateEdgeVisibility(visibility){
-    d3.selectAll('path.link')
-      .style("visibility", visibility ? "visible" : "hidden")
+  updateEdgeVisibility(visibility) {
+    if (visibility) {
+      const colorScale = this.makeColorScale();
+      d3.select(this.svg).selectAll('path.link-graph-witness')
+        .style('stroke', colorScale(this.props.witness))
+        .style('opacity', '' + this.props.edgeOpacity);
+    } else {
+      d3.select(this.svg).selectAll('path.link-graph-witness')
+        .style('stroke', '#f0f0f0')
+        .style('opacity', '1');
+    }
   }
-
 
   render() {
     return (
@@ -346,6 +345,3 @@ export default class Graph extends Component {
     );
   }
 }
-
-Graph.propTypes = {
-};
