@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import { getTexts } from '../actions'
+import { Grid, Row, Col, Table } from 'react-bootstrap';
 
 class Home extends Component {
   componentWillMount() {
@@ -18,17 +19,40 @@ class Home extends Component {
     }
 
     return (
-      <div className="container big-margin">
-        <h1>Texts</h1>
-        {texts.map(text => (
-          <div key={text.id}>
-            <Link to={`/text/${text.id}`}>
-              <div>{text.name}</div>
-            </Link>
-            <div>{text.chronology}</div>
-          </div>
-        ))}
-      </div>
+      <Grid>
+          <Row> {/* TEXT NAME */}
+            <Col sm={12} md={8} mdOffset={2}>
+              <p className="welcome">Welcome to TAG-AID</p>
+              <p className="welcome-sub">Please select the text you want to explore.<br/> If you need instructions on using the system, visit the <Link to="/help">help</Link> section.<br/>More on the project in the <Link to="/about">about</Link> section.</p>
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Text name</th>
+                    <th>Nodes</th>
+                    <th>Witnesses</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {texts.map((text,index) => (
+                    <tr key={text.id}>
+                      <td>{index+1}</td>
+                      <td className="text-name-home">{text.name}</td>
+                      <td>{text.max_rank}</td>
+                      <td></td>
+                      <td className="text-view">
+                        <Link to={`/text/${text.id}`}>
+                          <span>View this text</span>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </Col>
+          </Row>
+      </Grid>
     )
   }
 }
