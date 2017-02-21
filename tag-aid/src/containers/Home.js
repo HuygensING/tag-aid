@@ -21,7 +21,7 @@ class Home extends Component {
     return (
       <Grid>
           <Row> {/* TEXT NAME */}
-            <Col sm={12} md={8} mdOffset={2}>
+            <Col sm={12} md={10} mdOffset={1}>
               <p className="welcome">Welcome to TAG-AID</p>
               <p className="welcome-sub">Please select the text you want to explore.<br/> If you need instructions on using the system, visit the <Link to="/help">help</Link> section.<br/>More on the project in the <Link to="/about">about</Link> section.</p>
               <Table responsive>
@@ -29,6 +29,8 @@ class Home extends Component {
                   <tr>
                     <th></th>
                     <th>Text name</th>
+                    <th>Owner</th>
+                    <th>Primary language</th>
                     <th>Nodes</th>
                     <th>Witnesses</th>
                     <th></th>
@@ -39,6 +41,8 @@ class Home extends Component {
                     <tr key={text.id}>
                       <td>{index+1}</td>
                       <td className="text-name-home">{text.name}</td>
+                      <td>{text.owner}</td>
+                      <td>{text.language}</td>
                       <td>{text.max_rank}</td>
                       <td></td>
                       <td className="text-view">

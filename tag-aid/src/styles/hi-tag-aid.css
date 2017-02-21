@@ -32,7 +32,7 @@ figure {
     margin: 5rem 0;
 }
 
-img {
+figure > img {
     width: 100%;
     height: auto;
     border: 1px solid #ddd
@@ -59,6 +59,7 @@ figcaption {
 
 .text-name-home {
 	font-weight: normal;
+	color: #000;
 }
 
 .text-view {
