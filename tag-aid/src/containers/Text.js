@@ -223,7 +223,7 @@ class Text extends Component {
                         />
                         <label htmlFor='toggle-variation-marks'></label>
                       </div>
-                      <div className="graph-control">
+                      {/* <div className="graph-control">
                         <div className="graph-control-label">Nodes</div>
                         <input
                           id="toggle-nodes"
@@ -233,8 +233,8 @@ class Text extends Component {
                           checked={toggles.showNodes}
                         />
                         <label htmlFor='toggle-nodes'></label>
-                      </div>
-                      <div className="graph-control">
+                      </div> */}
+                      {/* <div className="graph-control">
                         <div className="graph-control-label">Edges</div>
                         <input
                           id="toggle-edges"
@@ -244,7 +244,7 @@ class Text extends Component {
                           checked={toggles.showEdges}
                         />
                         <label htmlFor='toggle-edges'></label>
-                      </div>
+                      </div> */}
                     </div>
                 </div> {/* END GRAPH CONTROLS */}
               </div>
