@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import * as d3 from 'd3';
 import { sankey } from 'd3-sankey';
-import { some } from 'lodash'
+import { some, get } from 'lodash'
 import '../styles/graph-style.css';
 
 export default class Graph extends Component {
@@ -65,7 +65,7 @@ export default class Graph extends Component {
       "#FE9700",
       "#FE5722",
     ];
-    console.log('~~', this.props.witnesses)
+    // console.log('~~', this.props.witnesses)
     const colorScale = d3.scaleOrdinal()
       .domain(this.props.witnesses)
       .range(colors);
@@ -73,11 +73,11 @@ export default class Graph extends Component {
   }
 
   drawSankey(allNodes, allLinks) {
-    const { setViewedPosition, viewedPosition } = this.props;
+    const { setViewedPosition, viewedPosition, nodeWidth } = this.props;
 
-    const margin = { top: 40, right: 50, bottom: 40, left: 20 };
+    const margin = { top: 40, right: 50, bottom: 40, left: 40 };
     const width = 1000 - margin.left - margin.right;
-    const height = 200 - margin.top - margin.bottom;
+    const height = 240 - margin.top - margin.bottom;
 
     // append the svg sankey
     const svg = d3.select(this.svg)
@@ -99,25 +99,103 @@ export default class Graph extends Component {
     // const missingNodes = allLinks.reduce((result, link) => {
     //   const missing = {}
     //   if (typeof nodePosMap[link.source] === 'undefined') {
-    //     missing[link.source] = { id: link.source, text: 'X', rank: viewedPosition.start, fake: true }
+    //     missing[link.source] = { id: link.source, text: 'MS',
+    //       rank: viewedPosition.start -1,
+    //       fake: true }
     //   }
-      // if (typeof nodePosMap[link.target] === 'undefined') {
-      //   missing[link.target] = { id: link.target, text: 'X' , rank: 0}
-      // }
-      // return { ...result, ...missing }
+    //   if (typeof nodePosMap[link.target] === 'undefined') {
+    //     missing[link.target] = { id: link.target, text: 'MT' ,
+    //     rank:  viewedPosition.end + 1,
+    //     fake: true }
+    //   }
+    //   return { ...result, ...missing }
     // }, {})
+    let missingNodes = {}
+    let nodesToDrop = {}
+    let annotatedNodes = {}
+    allLinks.forEach((link, i) => {
+        if (link && typeof nodePosMap[+link.source] === 'undefined') {
+          const idx = nodePosMap[+link.target]
+          const targetNode = allNodes[idx]
+          if(true || targetNode.rank !== viewedPosition.start){
+            if(!annotatedNodes[targetNode.id]){
+              annotatedNodes[targetNode.id] = { sourcesOut: [link.value] }
+            } else {
+              if(!annotatedNodes[targetNode.id].sourcesOut){
+                  annotatedNodes[targetNode.id].sourcesOut = []
+              }
+              annotatedNodes[targetNode.id].sourcesOut.push(link.value)
+            }
+          }
 
+          // targetNode.sourcesOut = targetNode.sourcesOut || 0
+          // targetNode.sourcesOut += link.value
+          // console.log(targetNode.sourcesOut)
+
+        //   if(+targetNode.rank > viewedPosition.start){
+        //     if(!missingNodes[link.source]){
+        //       missingNodes[link.source] = {
+        //         id: link.source, text: 'SOURCE',
+        //         rank: viewedPosition.start,
+        //         fake: true,
+        //         sourceLinks : [{...link}]
+        //       }
+        //     } else {
+        //       missingNodes[link.source].sourceLinks.push({...link})
+        //     }
+        //   }
+        } else {
+          //nodesToDrop[link.source] = true
+        }
+        if (link && typeof nodePosMap[+link.target] === 'undefined') {
+          const idx = nodePosMap[+link.source]
+          const sourceNode = allNodes[idx]
+          if(true || sourceNode.rank !== viewedPosition.end){
+            if(!annotatedNodes[idx]){
+              annotatedNodes[sourceNode.id] = { targetsOut: [link.value] }
+            } else {
+              if(!annotatedNodes[sourceNode.id].targetsOut){
+                annotatedNodes[sourceNode.id].targetsOut = []
+              }
+              annotatedNodes[sourceNode.id].targetsOut.push(link.value)
+            }
+          }
+
+          // sourceNode.targetsOut = sourceNode.targetsOut || 0
+          // sourceNode.targetsOut += link.value
+          // console.log(sourceNode.targetsOut)
+        //   if(+sourceNode.rank < viewedPosition.end){
+        //     if(!missingNodes[link.target]){
+        //       missingNodes[link.target] = {
+        //         id: link.target, text: 'TARGET',
+        //         rank: viewedPosition.end,
+        //         fake: true,
+        //         targetLinks : [{...link}]
+        //       }
+        //     } else {
+        //       missingNodes[link.target].targetLinks.push({...link})
+        //     }
+        //
+        //   }
+        } else {
+          //nodesToDrop[link.target] = true
+        }
+    })
+
+    // let syntethicNodes = Object.keys(missingNodes)
+    //   .filter(k => !nodesToDrop[k])
+    //   .map(k => missingNodes[k])
+    //
+    // console.log("syntethicNodes", syntethicNodes)
+    // const nodes = [ ...syntethicNodes, ...allNodes ];
+    //
+    // // Re-build node map with missing nodes
+    // nodePosMap = makeNodePosMap(nodes)
     // Sankey nodes
     const nodes = [ ...allNodes ];
 
-    // let xN = Object.keys(missingNodes).map(k => missingNodes[k])
-    // const nodes = [ ...xN, ...allNodes ];
-
-    // Re-build node map with missing nodes
-    // nodePosMap = makeNodePosMap(nodes)
-
     // Sankey links
-    const links = allLinks.map(link => ({
+    const links = allLinks.filter(l=>l).map(link => ({
       ...link,
       source: nodePosMap[link.source],
       target: nodePosMap[link.target]
@@ -126,7 +204,6 @@ export default class Graph extends Component {
     // FIXME: Do the right sort before
     .sort((a, b) => Number(a.source) - Number(b.source))
 
-    console.info("nodes and links", nodes.length, links.length)
 
     const sankeyLayout = sankey()
         .nodes(nodes)
@@ -151,7 +228,9 @@ export default class Graph extends Component {
         some(n.sourceLinks, isLinkGraphWitness) || some(n.targetLinks, isLinkGraphWitness)
 
       link
-        .enter().append("path")
+        .enter()
+        .append("path")
+        .attr("d", path)
         .attr("class", (d) => {
           const witnessClass = isLinkGraphWitness(d) ? 'link-graph-witness' : ''
           return `link with-source-${d.source.id} with-target-${d.target.id} ${witnessClass}`;
@@ -160,8 +239,8 @@ export default class Graph extends Component {
           return (!this.props.showEdges || isLinkGraphWitness(d)) ? this.props.edgeOpacity : '1'
         })
         // .style("visibility", this.props.showEdges ? "visible" : "hidden")
-        .attr("d", path)
-        .style("stroke-width", function(d) { return Math.max(1, d.dy); })
+
+        .style("stroke-width", function(d) { return Math.max(1, Math.abs(d.dy)); })
         .style("stroke", (d) => {
           if (this.props.showEdges && isLinkGraphWitness(d)) {
             return colorScale(this.props.witness);
@@ -173,7 +252,24 @@ export default class Graph extends Component {
 
       .merge(link)
         .attr("d", path)
-        .sort(function(a, b) { return b.dy - a.dy; });
+        .attr("class", (d) => {
+          const witnessClass = isLinkGraphWitness(d) ? 'link-graph-witness' : ''
+          return `link with-source-${d.source.id} with-target-${d.target.id} ${witnessClass}`;
+        })
+        .style('opacity', (d) => {
+          return (!this.props.showEdges || isLinkGraphWitness(d)) ? this.props.edgeOpacity : '1'
+        })
+        // .style("visibility", this.props.showEdges ? "visible" : "hidden")
+
+        .style("stroke-width", function(d) { return Math.max(1, Math.abs(d.dy)); })
+        .style("stroke", (d) => {
+          if (this.props.showEdges && isLinkGraphWitness(d)) {
+            return colorScale(this.props.witness);
+          }
+          return '#f0f0f0';
+        })
+        // .style("stroke-width", 5)
+        .sort(function(a, b) { return b.dy - a.dy; })
 
   //
   // // add the link titles
@@ -189,6 +285,7 @@ export default class Graph extends Component {
         .attr("transform", function(d) {
   		  return "translate(" + d.x + "," + d.y + ")"; })
 
+
     node.exit().remove();
 
     let enter = node
@@ -200,23 +297,42 @@ export default class Graph extends Component {
   		  return "translate(" + d.x + "," + d.y + ")"; })
       .call(d3.drag()
         // .origin(function(d) { return d; })
-        .on("start", function() {
-  		  this.parentNode.appendChild(this); })
+        // .on("start", function() {
+  		  //     this.parentNode.appendChild(this); })
         .on("drag", dragmove))
+
 
     // add the rectangles for the nodes
     enter.append("rect")
         .attr("height", function(d) {
-          return d.value;
-          //return Math.abs(d.dy);
+          return Math.abs(d.dy);
         })
         .attr("width", 2)
         .style("fill", "#ddd")
         .style("opacity", 1)
-      .append("title")
-        .text(d => {
-          return d.text
+
+    //oow
+    const annotationCircle = enter.append("circle")
+        .attr("class", "annotation")
+        .attr("cx", function(d) { return d.dx-1; })
+        .attr("cy", 0)
+        .attr("r", function(d){
+          if(annotatedNodes[d.id]){
+            const targetsOut = get(annotatedNodes[d.id], "targetsOut", [])
+            const sourcesOut = get(annotatedNodes[d.id], "sourcesOut", [])
+            return `${nodeWidth / 2 + targetsOut.length * 5 + sourcesOut.length * 5}`
+          }
+          return 0
         })
+        .attr('opacity', '.25')
+        .style("fill", (d) => {
+          if (this.props.showNodes && isNodeGraphWitness(d)) {
+            return colorScale(this.props.witness);
+          }
+          return "#222";
+      	})
+
+
     // add circles on top of the rectangles
     enter.append("circle")
         .attr("class", (d) => {
@@ -224,7 +340,7 @@ export default class Graph extends Component {
         })
         .attr("cx", function(d) { return d.dx-1; })
         .attr("cy", 0)
-        .attr("r", this.props.nodeWidth / 2)
+        .attr("r", nodeWidth / 2)
         .attr('opacity', (d) => {
           return (!this.props.showNodes || isNodeGraphWitness(d)) ? this.props.nodeOpacity : '1'
         })
@@ -246,10 +362,55 @@ export default class Graph extends Component {
         .attr("transform", null)
         .text(function(d) { return d.text; });
 
-    enter
+
+    const mergeNode = enter
       .merge(node)
         .attr("transform", function(d) {
           return "translate(" + d.x + "," + d.y + ")"; })
+      mergeNode
+      .select("rect")
+      .attr("height", function(d) {
+        return Math.abs(d.dy);
+      })
+
+      mergeNode
+        .select("circle.annotation")
+        .attr("r", function(d){
+          if(annotatedNodes[d.id]){
+            const targetsOut = get(annotatedNodes[d.id], "targetsOut", [])
+            const sourcesOut = get(annotatedNodes[d.id], "sourcesOut", [])
+            return `${nodeWidth / 2 + targetsOut.length * 5 + sourcesOut.length * 5}`
+          }
+          return 0
+        })
+
+
+      mergeNode
+        .select("circle.circle-shape")
+            .attr("class", (d) => {
+              return isNodeGraphWitness(d) ? 'circle-shape circle-shape-graph-witness' : 'circle-shape'
+            })
+            .attr("cx", function(d) { return d.dx-1; })
+            .attr("cy", 0)
+            .attr('opacity', (d) => {
+              return (!this.props.showNodes || isNodeGraphWitness(d)) ? this.props.nodeOpacity : '1'
+            })
+            .style("fill", (d) => {
+              if (this.props.showNodes && isNodeGraphWitness(d)) {
+                return colorScale(this.props.witness);
+              }
+          		return "#aaa";
+          	});
+
+      mergeNode
+        .select("text")
+          .attr("class", "word")
+          .attr("x", 0)
+          .attr("y", function(d) { return -11; })
+          .attr("dy", ".35em")
+          .attr("text-anchor", "middle")
+          .attr("transform", null)
+          .text(function(d) { return d.text; });
 
 
   //

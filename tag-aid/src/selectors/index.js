@@ -38,7 +38,7 @@ export const getTextNodesByWitness = createSelector(
   getNodesAtPositionByWitness,
   getViewedPosition,
   (nodesById, nodesAtPositionByWitness, { start, end }) => {
-    console.time("getTextNodesByWitness")
+    // console.time("getTextNodesByWitness")
     const out = mapValues(nodesAtPositionByWitness, nodesAtPosition =>
     // TODO: Check max end...
     range(Math.max(0, start - TEXT_PADDING) , end + TEXT_PADDING + 1)
@@ -50,7 +50,7 @@ export const getTextNodesByWitness = createSelector(
         return { ...node, pos, viewed: (pos >= start && pos <= end) };
       })
     )
-    console.timeEnd("getTextNodesByWitness")
+    // console.timeEnd("getTextNodesByWitness")
     return out;
 
   }
@@ -61,12 +61,12 @@ export const getSankeyNodes = createSelector(
   getNodesAtPosition,
   getViewedPosition,
   (nodesById, nodesAtPosition, { start, end }) => {
-    console.time("getSankeyNodes")
+    // console.time("getSankeyNodes")
     // Sankey draw double of nodes and show the half...
     const out = range(start, end + 1)
     .reduce((result, pos) => [...result, ...Object.keys(nodesAtPosition[pos] || {})], [])
     .map(nodeId => nodesById[nodeId])
-    console.timeEnd("getSankeyNodes")
+    // console.timeEnd("getSankeyNodes")
     return out;
   }
 )
@@ -76,14 +76,14 @@ export const getSankeyLinks = createSelector(
   getSankeyNodes,
   getLinksByNodes,
   (linksById, nodes, linksByNodes) => {
-    console.time("getSankeyLinks")
+    // console.time("getSankeyLinks")
     const out = nodes.reduce((result, node) => {
     const links = Object.keys(linksByNodes[node.id]);
     return [...result, ...links.filter(linkId => !includes(result, linkId))];
     }, [])
     .map(linkId => linksById[linkId])
 
-    console.timeEnd("getSankeyLinks")
+    // console.timeEnd("getSankeyLinks")
     return out
 
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Row, Col, Image } from 'react-bootstrap';
+import { Grid, Row, Col } from 'react-bootstrap';
 import textSankey from "../images/textSankey.png";
 
 const About = () => {
