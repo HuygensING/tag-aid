@@ -44,9 +44,6 @@ class Text extends Component {
     this.state = {
       searchToken : '',
       searchedCurrentToken : false,
-      popoverTarget: null,
-      popoverContent: null,
-      popoverCloseCb: null,
       popovers : {},
     }
   }
