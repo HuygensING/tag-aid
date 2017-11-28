@@ -36,7 +36,6 @@ import 'rc-slider/assets/index.css'
 import '../styles/hi-faceted-search.css'
 import { WITNESS_COLORS } from '../util/colors'
 
-
 class Text extends Component {
 
   constructor(props){

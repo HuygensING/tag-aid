@@ -231,6 +231,20 @@ export default class Graph extends Component {
         })
         // .style("stroke-width", 5)
         .sort(function(a, b) { return b.dy - a.dy; })
+        .on("click", function(d){
+          const node = d3.select(this).node()
+          const nodeWitnesses = d.witness
+          const isAllWitnesses = witnesses.length === nodeWitnesses.length
+          const msg = `${isAllWitnesses ? 'all' : nodeWitnesses.length} witness${nodeWitnesses.length > 1 ? 'es' : ''}`
+
+          handleOpenPopover(node, <div>
+            <p>
+              <small>edge</small><br/>
+              <b>{d.source.text} - {d.target.text}</b>
+            </p>
+            <p>Appears in {msg}</p>
+          </div>)
+        })
 
       .merge(link)
         .attr("d", path)
