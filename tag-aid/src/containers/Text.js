@@ -49,9 +49,7 @@ class Text extends Component {
     }
   }
 
-  // # todo: move to utils
   makeColorScale = (witnesses) => {
-    // console.log('~~', this.props.witnesses)
     const colorScale = d3.scaleOrdinal()
       .domain(this.props.witnessesCheck.map(x => x.value))
       .range(WITNESS_COLORS)
@@ -59,7 +57,6 @@ class Text extends Component {
   }
 
   componentWillMount() {
-    console.log(100, "willmount text")
     this.props.setSelectedText(this.props.params.textId)
   }
 
