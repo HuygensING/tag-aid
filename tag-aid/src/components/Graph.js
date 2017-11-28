@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import * as d3 from 'd3';
 import { sankey } from 'd3-sankey';
-import { some, get } from 'lodash'
+import { some, get, uniq } from 'lodash'
 import '../styles/graph-style.css';
 
 export default class Graph extends Component {
@@ -73,7 +73,7 @@ export default class Graph extends Component {
   }
 
   drawSankey(allNodes, allLinks) {
-    const { setViewedPosition, viewedPosition, nodeWidth } = this.props;
+    const { setViewedPosition, viewedPosition, nodeWidth, handleOpenPopover, handleClosePopover, witnesses } = this.props;
 
     const margin = { top: 40, right: 50, bottom: 40, left: 40 };
     const width = 1000 - margin.left - margin.right;
@@ -300,6 +300,25 @@ export default class Graph extends Component {
         // .on("start", function() {
   		  //     this.parentNode.appendChild(this); })
         .on("drag", dragmove))
+        .on("click", function(d){
+          const node = d3.select(this).node()
+          // console.log("d", d)
+          const nodeWitnesses = d.targetLinks.concat(d.sourceLinks).reduce((acc, value) => {
+            const w = value.witness
+            return uniq(acc.concat(w))
+          }, [])
+
+          const isAllWitnesses = witnesses.length === nodeWitnesses.length
+          const msg = `${isAllWitnesses ? 'all' : nodeWitnesses.length} witness${nodeWitnesses.length > 1 ? 'es' : ''}`
+
+          handleOpenPopover(node, <div>
+            <p>
+              <small>word</small><br/>
+              <b>{d.text}</b>
+            </p>
+            <p>Appears in {msg}</p>
+          </div>)
+        })
 
 
     // add the rectangles for the nodes
@@ -433,6 +452,8 @@ export default class Graph extends Component {
     const that = this;
 
     const graphDrag = function(d, evt) {
+      that.props.handleClosePopover()
+
       const { setViewedPosition, viewedPosition, maxNodes } = that.props;
       const dx = Number(d3.select(this).attr('dx') || 0) - d3.event.dx
       d3.select(this).attr('dx', dx)

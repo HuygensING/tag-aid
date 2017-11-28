@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { Link } from 'react-router'
 import {
   setSelectedText,
   unloadSelectedText,
@@ -16,7 +16,7 @@ import {
   toggleShowVarationsMarks,
   toggleShowNodes,
   toggleShowEdges
-} from '../actions';
+} from '../actions'
 import {
   getWitnessesCheck,
   getSelectedWitnesses,
@@ -26,24 +26,57 @@ import {
   getTextSearchResults,
   getIsGraphLoading,
 } from '../selectors'
-import WitnessText from '../components/WitnessText';
-import Graph from '../components/Graph';
-import { Grid, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
+import WitnessText from '../components/WitnessText'
+import Graph from '../components/Graph'
+import { Grid, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap'
 import Slider from 'rc-slider'
+import Popover from 'react-simple-popover'
+import * as d3 from 'd3'
 import 'rc-slider/assets/index.css'
-import '../styles/hi-faceted-search.css';
+import '../styles/hi-faceted-search.css'
+
 
 class Text extends Component {
 
   constructor(props){
-    super(props);
+    super(props)
     this.state = {
       searchToken : '',
-      searchedCurrentToken : false
+      searchedCurrentToken : false,
+      popoverTarget: null,
+      popoverContent: null,
     }
   }
 
+  // # todo: move to utils
+  makeColorScale = (witnesses) => {
+    const colors = [
+      "#F34336",
+      "#E81E63",
+      "#9B27AF",
+      "#673AB6",
+      "#3F51B4",
+      "#2195F2",
+      "#03A8F3",
+      "#00BBD3",
+      "#009587",
+      "#4CAE50",
+      "#8AC24A",
+      "#CCDB39",
+      "#FEEA3B",
+      "#FEC007",
+      "#FE9700",
+      "#FE5722",
+    ];
+    // console.log('~~', this.props.witnesses)
+    const colorScale = d3.scaleOrdinal()
+      .domain(this.props.witnessesCheck.map(x => x.value))
+      .range(colors)
+    return colorScale;
+  }
+
   componentWillMount() {
+    console.log(100, "willmount text")
     this.props.setSelectedText(this.props.params.textId)
   }
 
@@ -71,11 +104,22 @@ class Text extends Component {
     this.props.searchText(this.state.searchToken);
   }
 
+  handleOpenPopover = (node, content) => {
+    this.setState( {popoverTarget:node, popoverContent: content} )
+  }
+
+  handleClosePopover = () => {
+    if(!this.state.popoverTarget){return}
+    this.setState({popoverTarget:null, popoverContent: null})
+  }
+
   render() {
     // Loading main text info nothing to do
     if (!this.props.text) {
       return <div>Loading text...</div>
     }
+
+    const wScale = this.makeColorScale()
 
     const {
       text,
@@ -158,7 +202,6 @@ class Text extends Component {
                     <div className="selectors">
 
                       <div className="facet-item">
-
                         {witnessesCheck.map(witness => (
                           <div key={witness.value} className="checkbox checkbox-witness">
                             <input
@@ -169,8 +212,12 @@ class Text extends Component {
                               value={witness.value}
                               name={witness.value}
                             />
-                            <label htmlFor={witness.value}>{witness.value}</label>
-                            <div className="facet-item-color facet-item-color-grey pull-left"></div>
+
+                            <label htmlFor={witness.value}>
+                              <div className="facet-item-color facet-item-color-grey" style={{display:'inline-block', backgroundColor:witness.checked ? wScale(witness.value) :undefined}  }></div>
+                              {witness.value}
+                            </label>
+
                           </div>
                         ))}
                         </div>
@@ -254,7 +301,24 @@ class Text extends Component {
               {isGraphLoading && <div>Loading Graph...</div>}
               <div id="chart-area"> {/* CHART */}
                 {selectedWitnesses.map(witness => (
-                  <Graph key={witness}
+                  <div key={witness}>
+                    <Popover
+                      placement='top'
+                      show={!!this.state.popoverTarget}
+                      target={this.state.popoverTarget}
+                      // container={this}
+                      hideWithOutsideClick={false}
+                      onHide={this.handleClosePopover}
+                    >
+                      <div>
+                        <a className="pointer pull-right" onClick={()=>this.handleClosePopover()}>X</a>
+                        <div className="clearfix">
+                            {this.state.popoverContent}
+                        </div>
+                      </div>
+
+                  </Popover>
+                  <Graph
                     maxNodes={maxNodes}
                     nodeOpacity={sliders.nodeOpacity}
                     nodeWidth={sliders.nodeWidth}
@@ -268,7 +332,10 @@ class Text extends Component {
                     links={allLinks}
                     witness={witness}
                     witnesses={witnesses}
+                    handleOpenPopover={this.handleOpenPopover}
+                    handleClosePopover={this.handleClosePopover}
                   />
+                  </div>
                 ))}
               </div> {/* END CHART */}
               <div> {/* WITNESS TEXT */}
