@@ -45,6 +45,7 @@ class Text extends Component {
       searchedCurrentToken : false,
       popoverTarget: null,
       popoverContent: null,
+      popoverCloseCb: null,
     }
   }
 
@@ -83,13 +84,19 @@ class Text extends Component {
     this.props.searchText(this.state.searchToken);
   }
 
-  handleOpenPopover = (node, content) => {
-    this.setState( {popoverTarget:node, popoverContent: content} )
+  handleOpenPopover = (node, content, popoverCloseCb) => {
+    if(this.state.popoverCloseCb){
+      this.state.popoverCloseCb()
+    }
+    this.setState( {popoverTarget:node, popoverContent: content, popoverCloseCb} )
   }
 
   handleClosePopover = () => {
     if(!this.state.popoverTarget){return}
-    this.setState({popoverTarget:null, popoverContent: null})
+    if(this.state.popoverCloseCb){
+      this.state.popoverCloseCb()
+    }
+    this.setState({popoverTarget:null, popoverContent: null, popoverCloseCb:null})
   }
 
   render() {

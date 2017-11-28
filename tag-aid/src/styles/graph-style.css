@@ -3,6 +3,10 @@ svg {
  border-bottom: 1px solid #ddd;
 }
 
+.node {
+  cursor: pointer;
+}
+
 .node rect {
   cursor: move;
   fill-opacity: 1;
@@ -17,6 +21,7 @@ svg {
   fill: none;
   stroke: #ccc;
   /*stroke-opacity: 1;*/
+  cursor: pointer;
 }
 
 .link:hover {
@@ -27,4 +32,21 @@ svg {
 .word {
   font-size: .75em;
   /*font-weight: 600;*/
+}
+
+
+.edge-selected {
+  stroke: #444 !important;
+}
+
+.node-selected circle.circle-shape {
+  fill:  #444 !important;
+  stroke: black !important;
+  stroke-width: 2px !important;
+  opacity: 0.75 !important;
+}
+
+.node-selected text.word {
+  color: black !important;
+  font-weight: bold !important;
 }

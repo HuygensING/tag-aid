@@ -232,7 +232,12 @@ export default class Graph extends Component {
         // .style("stroke-width", 5)
         .sort(function(a, b) { return b.dy - a.dy; })
         .on("click", function(d){
-          const node = d3.select(this).node()
+          const selection = d3.select(this)
+
+          const node = selection.node()
+          selection.attr("old-stroke", selection.style("stroke"));
+          selection.classed("edge-selected", true);
+
           const nodeWitnesses = d.witness
           const isAllWitnesses = witnesses.length === nodeWitnesses.length
           const msg = `${isAllWitnesses ? 'all' : nodeWitnesses.length} witness${nodeWitnesses.length > 1 ? 'es' : ''}`
@@ -243,7 +248,7 @@ export default class Graph extends Component {
               <b>{d.source.text} - {d.target.text}</b>
             </p>
             <p>Appears in {msg}</p>
-          </div>)
+          </div>, ()=>selection.classed("edge-selected", false))
         })
 
       .merge(link)
@@ -297,7 +302,9 @@ export default class Graph extends Component {
   		  //     this.parentNode.appendChild(this); })
         .on("drag", dragmove))
         .on("click", function(d){
-          const node = d3.select(this).node()
+          const selection = d3.select(this)
+          selection.classed("node-selected", true)
+          const node = selection.node()
           // console.log("d", d)
           const nodeWitnesses = d.targetLinks.concat(d.sourceLinks).reduce((acc, value) => {
             const w = value.witness
@@ -313,7 +320,11 @@ export default class Graph extends Component {
               <b>{d.text}</b>
             </p>
             <p>Appears in {msg}</p>
-          </div>)
+            </div>,
+
+            ()=>selection.classed("node-selected", false)
+            
+          )
         })
 
 
