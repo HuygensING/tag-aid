@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import * as d3 from 'd3';
 import { sankey } from 'd3-sankey';
 import { some, get, uniq } from 'lodash'
+import { WITNESS_COLORS } from '../util/colors'
 import '../styles/graph-style.css';
 
 export default class Graph extends Component {
@@ -47,28 +48,9 @@ export default class Graph extends Component {
   }
 
   makeColorScale = () => {
-    const colors = [
-      "#F34336",
-      "#E81E63",
-      "#9B27AF",
-      "#673AB6",
-      "#3F51B4",
-      "#2195F2",
-      "#03A8F3",
-      "#00BBD3",
-      "#009587",
-      "#4CAE50",
-      "#8AC24A",
-      "#CCDB39",
-      "#FEEA3B",
-      "#FEC007",
-      "#FE9700",
-      "#FE5722",
-    ];
-    // console.log('~~', this.props.witnesses)
     const colorScale = d3.scaleOrdinal()
       .domain(this.props.witnesses)
-      .range(colors);
+      .range(WITNESS_COLORS);
     return colorScale;
   }
 
