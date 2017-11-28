@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
+import { get } from 'lodash'
 import {
   setSelectedText,
   unloadSelectedText,
@@ -46,6 +47,7 @@ class Text extends Component {
       popoverTarget: null,
       popoverContent: null,
       popoverCloseCb: null,
+      popovers : {},
     }
   }
 
@@ -84,19 +86,30 @@ class Text extends Component {
     this.props.searchText(this.state.searchToken);
   }
 
-  handleOpenPopover = (node, content, popoverCloseCb) => {
-    if(this.state.popoverCloseCb){
-      this.state.popoverCloseCb()
+  handleOpenPopover = (popoverKey) => (node, content, closeCb) => {
+
+    const popoverState = get(this.state.popovers, popoverKey, {})
+    const { popoverCloseCb, popoverTarget, popoverContent } = popoverState
+
+    if(popoverCloseCb){
+      popoverCloseCb()
     }
-    this.setState( {popoverTarget:node, popoverContent: content, popoverCloseCb} )
+    let popovers = this.state.popovers
+    popovers[popoverKey] = {popoverTarget:node, popoverContent: content, popoverCloseCb:closeCb}
+    this.setState({popovers})
   }
 
-  handleClosePopover = () => {
-    if(!this.state.popoverTarget){return}
-    if(this.state.popoverCloseCb){
-      this.state.popoverCloseCb()
+  handleClosePopover = (popoverKey) => () => {
+    const popoverState = get(this.state.popovers, popoverKey, {})
+    const { popoverCloseCb, popoverTarget, popoverContent } = popoverState
+
+    if(!popoverTarget){return}
+    if(popoverCloseCb){
+      popoverCloseCb()
     }
-    this.setState({popoverTarget:null, popoverContent: null, popoverCloseCb:null})
+    let popovers = this.state.popovers
+    popovers[popoverKey] = {popoverTarget:null, popoverContent: null, popoverCloseCb:null}
+    this.setState({popovers})
   }
 
   render() {
@@ -290,16 +303,16 @@ class Text extends Component {
                   <div key={witness}>
                     <Popover
                       placement='top'
-                      show={!!this.state.popoverTarget}
-                      target={this.state.popoverTarget}
+                      show={!!get(this.state.popovers[witness], 'popoverTarget')}
+                      target={get(this.state.popovers[witness], 'popoverTarget')}
                       // container={this}
                       hideWithOutsideClick={false}
-                      onHide={this.handleClosePopover}
+                      // onHide={this.handleClosePopover}
                     >
                       <div>
-                        <a className="pointer pull-right" onClick={()=>this.handleClosePopover()}>X</a>
+                        <a className="pointer pull-right" onClick={()=>this.handleClosePopover(witness)()}>X</a>
                         <div className="clearfix">
-                            {this.state.popoverContent}
+                            {get(this.state.popovers[witness], 'popoverContent')}
                         </div>
                       </div>
 
@@ -318,8 +331,8 @@ class Text extends Component {
                     links={allLinks}
                     witness={witness}
                     witnesses={witnesses}
-                    handleOpenPopover={this.handleOpenPopover}
-                    handleClosePopover={this.handleClosePopover}
+                    handleOpenPopover={this.handleOpenPopover(witness)}
+                    handleClosePopover={this.handleClosePopover(witness)}
                   />
                   </div>
                 ))}
