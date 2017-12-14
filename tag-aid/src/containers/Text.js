@@ -211,7 +211,8 @@ class Text extends Component {
 
                             <label htmlFor={witness.value}>
                               <div className="facet-item-color facet-item-color-grey" style={{display:'inline-block', backgroundColor:witness.checked ? wScale(witness.value) :undefined}  }></div>
-                              {witness.value}
+                              <span
+                                style={{textDecoration:  witness.checked ? `underline ${wScale(witness.value)}` : undefined}}>{witness.value}</span>
                             </label>
 
                           </div>
