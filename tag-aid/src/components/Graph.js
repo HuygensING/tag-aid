@@ -1,9 +1,31 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes, Component, PureComponent } from 'react';
 import * as d3 from 'd3';
 import { sankey } from 'd3-sankey';
 import { some, get, uniq } from 'lodash'
 import { WITNESS_COLORS } from '../util/colors'
 import '../styles/graph-style.css';
+import * as api from '../api'
+
+
+class NodeLink extends Component {
+
+  state = { node : null }
+
+  componentWillMount(){
+    const { nodeId, handleLink } = this.props
+    api.getTextNode(nodeId)
+    .then(node => this.setState({node}))
+    // api.getGraph
+  }
+  render(){
+    const { node } = this.state
+    if(!node) return null
+    return (<p>
+      {node.text} <a onClick={() => this.props.handleLink(node.rank)}>{node.rank}</a>
+    </p>)
+  }
+}
+
 
 export default class Graph extends Component {
 
@@ -55,11 +77,13 @@ export default class Graph extends Component {
   }
 
   drawSankey(allNodes, allLinks) {
-    const { setViewedPosition, viewedPosition, nodeWidth, handleOpenPopover, handleClosePopover, witnesses } = this.props;
+    const { setViewedPosition, viewedPosition, nodeWidth, handleOpenPopover, handleClosePopover, witnesses, text } = this.props;
 
     const margin = { top: 40, right: 50, bottom: 40, left: 40 };
     const width = 1000 - margin.left - margin.right;
     const height = 240 - margin.top - margin.bottom;
+
+    const that = this;
 
     // append the svg sankey
     const svg = d3.select(this.svg)
@@ -101,12 +125,12 @@ export default class Graph extends Component {
           const targetNode = allNodes[idx]
           if(true || targetNode.rank !== viewedPosition.start){
             if(!annotatedNodes[targetNode.id]){
-              annotatedNodes[targetNode.id] = { sourcesOut: [link.value] }
+              annotatedNodes[targetNode.id] = { sourcesOut: [[link.value, +link.source]] }
             } else {
               if(!annotatedNodes[targetNode.id].sourcesOut){
                   annotatedNodes[targetNode.id].sourcesOut = []
               }
-              annotatedNodes[targetNode.id].sourcesOut.push(link.value)
+              annotatedNodes[targetNode.id].sourcesOut.push([link.value, +link.source])
             }
           }
 
@@ -134,12 +158,12 @@ export default class Graph extends Component {
           const sourceNode = allNodes[idx]
           if(true || sourceNode.rank !== viewedPosition.end){
             if(!annotatedNodes[idx]){
-              annotatedNodes[sourceNode.id] = { targetsOut: [link.value] }
+              annotatedNodes[sourceNode.id] = { targetsOut: [[link.value, link.target]] }
             } else {
               if(!annotatedNodes[sourceNode.id].targetsOut){
                 annotatedNodes[sourceNode.id].targetsOut = []
               }
-              annotatedNodes[sourceNode.id].targetsOut.push(link.value)
+              annotatedNodes[sourceNode.id].targetsOut.push([link.value, link.target])
             }
           }
 
@@ -314,16 +338,37 @@ export default class Graph extends Component {
           const isAllWitnesses = witnesses.length === nodeWitnesses.length
           const msg = `${isAllWitnesses ? 'all' : nodeWitnesses.length} witness${nodeWitnesses.length > 1 ? 'es' : ''}`
 
+          const targetsOut = annotatedNodes[d.id] ? get(annotatedNodes[d.id], "targetsOut", []) : []
+          const sourcesOut = annotatedNodes[d.id] ? get(annotatedNodes[d.id], "sourcesOut", []) : []
+          const allOut = targetsOut.concat(sourcesOut)
+
+          // const leftConns = allOut.filter(x => { console.log("zz", x, d); return x[1].rank < d.rank})
+          // const rightConns = allOut.filter(x => x[1].rank > d.rank)
+        
           handleOpenPopover(node, <div>
             <p>
               <small>word</small><br/>
               <b>{d.text}</b>
             </p>
             <p>Appears in {msg}</p>
+            { allOut.length > 0 && (
+              <div>
+                <p>{allOut.length} with nodes outside the current view.</p>
+                {allOut.map((x,i) => (
+                  <div key={i}>
+                    <NodeLink nodeId={x[1]} handleLink={(rank)=>{
+                      that.props.setViewedPosition(rank, rank+20);
+                      that.props.handleClosePopover()
+                    }}/>
+                  </div>
+                ))}
+
+              </div>
+            )}
             </div>,
 
             ()=>selection.classed("node-selected", false)
-            
+
           )
         })
 
@@ -344,8 +389,8 @@ export default class Graph extends Component {
         .attr("cy", 0)
         .attr("r", function(d){
           if(annotatedNodes[d.id]){
-            const targetsOut = get(annotatedNodes[d.id], "targetsOut", [])
-            const sourcesOut = get(annotatedNodes[d.id], "sourcesOut", [])
+            const targetsOut = get(annotatedNodes[d.id], "targetsOut", []).map(x => x[0])
+            const sourcesOut = get(annotatedNodes[d.id], "sourcesOut", []).map(x => x[0])
             return `${nodeWidth / 2 + targetsOut.length * 5 + sourcesOut.length * 5}`
           }
           return 0
@@ -403,8 +448,8 @@ export default class Graph extends Component {
         .select("circle.annotation")
         .attr("r", function(d){
           if(annotatedNodes[d.id]){
-            const targetsOut = get(annotatedNodes[d.id], "targetsOut", [])
-            const sourcesOut = get(annotatedNodes[d.id], "sourcesOut", [])
+            const targetsOut = get(annotatedNodes[d.id], "targetsOut", []).map(x => x[0])
+            const sourcesOut = get(annotatedNodes[d.id], "sourcesOut", []).map(x => x[0])
             return `${nodeWidth / 2 + targetsOut.length * 5 + sourcesOut.length * 5}`
           }
           return 0

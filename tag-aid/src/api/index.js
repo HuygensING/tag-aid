@@ -30,3 +30,8 @@ export const getTextInfo = (textId) =>
 export const getTextWitnesses = (textId) =>
   fetchJson(`/stemmarest/tradition/${textId}/witnesses`)
   .then(({ json }) => json)
+
+
+  export const getTextNode = (nodeId) =>
+    fetchJson(`/stemmarest/reading/${nodeId}`)
+    .then(({ json }) => json)

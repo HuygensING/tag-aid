@@ -316,6 +316,7 @@ class Text extends Component {
 
                   </Popover>
                   <Graph
+                    text={text}
                     maxNodes={maxNodes}
                     nodeOpacity={sliders.nodeOpacity}
                     nodeWidth={sliders.nodeWidth}
