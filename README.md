@@ -1,3 +1,5 @@
+*This project is no longer under active development*
+
 # TAG-AID
 
 This is the root of the repo, containing the following folders:
